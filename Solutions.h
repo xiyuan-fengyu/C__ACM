@@ -126,8 +126,48 @@ public:
     }
 
 
+
+    int kthLargestElement(int n, vector<int> &nums) {
+        return kthLargestElement(n, nums, 0, (int) nums.size() - 1);
+    }
+
+    int kthLargestElement(int n, vector<int> &nums, int left, int right) {
+        if (left >= right) {
+            return nums[left];
+        }
+
+        int l = left;
+        int r = right;
+        int key = nums[left];
+        while (l < r) {
+            while (l < r && nums[r] <= key) {
+                r--;
+            }
+            nums[l] = nums[r];
+
+            while (l < r && nums[l] >= key) {
+                l++;
+            }
+            nums[r] = nums[l];
+        }
+        nums[l] = key;
+
+        if (l == n - 1) {
+            return key;
+        }
+        else if (l < n - 1) {
+            return kthLargestElement(n, nums, l + 1, right);
+        }
+        else return kthLargestElement(n, nums, left, l - 1);
+    }
+
+
     void test() {
 
+        vector<int> arr = {
+                9,3,2,4,8
+        };
+        cout << kthLargestElement(3, arr) << endl;
 
 //        cout << nthUglyNumber(1665) << endl;
 
