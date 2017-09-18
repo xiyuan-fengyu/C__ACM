@@ -6,6 +6,8 @@
 #define C_ACM_SOLUTIONS_H
 
 #include <iostream>
+#include <vector>
+#include <array>
 
 using namespace std;
 
@@ -35,61 +37,103 @@ public:
         if (n < 10) return k <= n ? 1 : 0;
 
         int count = 0;
-        int nine = 9;
-        int index = 1;
-        while (true) {
-            int ten = (nine + 1) / 10;
-            if (n >= nine) {
-                if (k == 0) {
-                    count += index == 1 ? 1 : (index - 1) * ten * nine;
-                }
-                else {
-                    count += index * ten;
-                }
+        int base = 1;
+        int flag = k == 0 ? 10 : 1;
+        while (n / base >= flag) {
+            int high = n / (base * 10);
+            int ni = n / base % 10;
+            if (ni > k) {
+                count += (high + 1) * base;
+            }
+            else if (ni < k) {
+                count += high * base;
             }
             else {
-                int highNum = n / ten;
-                int lowNum = n - highNum * ten;
-                //高位出现 k 的次数
-                if (highNum == k) {
-                    count +=lowNum + 1;
-                }
-                else if (highNum > k && k != 0) {
-                    count += ten;
-                }
-
-                //低位出现 k 的次数
-                // n ~ [highNum]0000 这种数字低位出现 k 的次数
-                if (k != 0) {
-                    count += digitCounts(k, lowNum);
-                }
-                else {
-                    //todo
-
-                }
-
-                if (highNum > 1) {
-                    // [highNum-1]9999 ~ 10000 这种数字低位出现 k 的次数
-                    count += (highNum - 1) * ten / 100 * (index - 1);
-                }
-
-                break;
+                count += high * base + n % base + 1;
             }
-            nine = nine * 10 + 9;
-            index++;
+
+            base *= 10;
         }
+
         return count;
     }
 
 
 
+    //时间复杂度不符合要求
+//    int nthUglyNumber(int n) {
+//        vector<int> uglyVec = {1, 2, 3, 4, 5, 6, 8, 9, 10};
+//        if (n <= uglyVec.size()) return uglyVec[n - 1];
+//
+//        int index = 9;
+//        int left = 1;
+//        int right = 5;
+//        while (index++ < n) {
+//            int last = uglyVec[uglyVec.size() - 1];
+//            int min = uglyVec[left] * uglyVec[right];
+//
+//            for (int r = right - 1, l = left + 1; l <= r; ) {
+//                int temp = uglyVec[l] * uglyVec[r];
+//                if (temp > last) {
+//                    if (temp < min) {
+//                        min = temp;
+//                    }
+//                    else if (temp >= min) {
+//                        r--;
+//                    }
+//                }
+//                else {
+//                    l++;
+//                }
+//            }
+//            uglyVec.push_back(min);
+//
+//            left = 1;
+//            while (uglyVec[left] * uglyVec[++right] <= min);
+//        }
+//        return uglyVec[n - 1];
+//    }
+
+
+    int nthUglyNumber(int n) {
+        vector<int> arr = vector<int>(n);
+        arr[0] = 1;
+        int index235[] = {0, 0, 0};
+        int temp;
+        int min;
+        int minTypeIndex = 0;
+        for (int i = 1; i < n; ) {
+            min = arr[index235[0]] * 2;
+            minTypeIndex = 0;
+
+            if ((temp = arr[index235[1]] * 3) < min) {
+                min = temp;
+                minTypeIndex = 1;
+            }
+
+            if ((temp = arr[index235[2]] * 5) < min) {
+                min = temp;
+                minTypeIndex = 2;
+            }
+
+            if (min > arr[i - 1]) {
+                arr[i] = min;
+                i++;
+            }
+            index235[minTypeIndex]++;
+        }
+        return arr[n - 1];
+    }
+
+
     void test() {
 
 
-        cout << digitCounts(1, 10) << endl;
+//        cout << nthUglyNumber(1665) << endl;
+
+//        cout << digitCounts(1, 10) << endl;
 
 //        cout << trailingZeros(10) << endl;
-
 
 //        cout << aplusb(2, 2) << endl;
 
