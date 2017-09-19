@@ -8,8 +8,12 @@
 #include <iostream>
 #include <vector>
 #include <array>
+#include <map>
+
+#include "util/Util.h"
 
 using namespace std;
+using namespace xy;
 
 class Solutions {
 
@@ -127,6 +131,7 @@ public:
 
 
 
+
     int kthLargestElement(int n, vector<int> &nums) {
         return kthLargestElement(n, nums, 0, (int) nums.size() - 1);
     }
@@ -162,12 +167,54 @@ public:
     }
 
 
+
+    vector<int> mergeSortedArray(vector<int> &vecA, vector<int> &vecB) {
+        vector<int> mergeVec;
+        long indexA = 0;
+        long indexB = 0;
+        long sizeA = vecA.size();
+        long sizeB = vecB.size();
+
+        while (indexA < sizeA && indexB < sizeB) {
+            if (vecA[indexA] <= vecB[indexB]) {
+                mergeVec.push_back(vecA[indexA++]);
+            }
+            else {
+                mergeVec.push_back(vecB[indexB++]);
+            }
+        }
+
+        if (indexA < sizeA) {
+            while (indexA < sizeA) {
+                mergeVec.push_back(vecA[indexA++]);
+            }
+        }
+        else {
+            while (indexB < sizeB) {
+                mergeVec.push_back(vecB[indexB++]);
+            }
+        }
+        return mergeVec;
+    }
+
+
+
+
+
+
+
     void test() {
 
-        vector<int> arr = {
-                9,3,2,4,8
-        };
-        cout << kthLargestElement(3, arr) << endl;
+//        vector<int> arrA = {1,2,3,4};
+//        vector<int> arrB = {2,4,5,6};
+//        cout << join(arrA, ", ") << endl;
+//        cout << join(arrB, ", ") << endl;
+//        cout << join(mergeSortedArray(arrA, arrB), ", ") << endl;
+
+//        vector<int> arr = {
+//                9,3,2,4,8
+//        };
+//        cout << kthLargestElement(3, arr) << endl;
 
 //        cout << nthUglyNumber(1665) << endl;
 
