@@ -13,6 +13,8 @@ namespace xy {
 
     using namespace std;
 
+//----    join 相关函数 start    ---------------------------------------------------------------------------------------
+
     /**
      * 这个函数一定要在其他重载之前声明，否者会报类型推导失败的问题
      * @tparam T
@@ -62,6 +64,8 @@ namespace xy {
     static string join(T begin, int length, string joinStr) {
         return join(begin, 0, length, joinStr);
     }
+
+//----    join 相关函数 end    -----------------------------------------------------------------------------------------
 
 }
 
