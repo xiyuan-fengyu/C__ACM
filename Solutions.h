@@ -200,10 +200,65 @@ public:
 
 
 
+    string serialize(TreeNode *root) {
+        ostringstream stream;
+        if (root != nullptr) {
+            vector<TreeNode*> vec;
+            vec.push_back(root);
+
+            int index = 0;
+            while (index < vec.size()) {
+                TreeNode *cur = vec[index];
+                if (cur != nullptr) {
+                    stream << cur->val << ",";
+                    vec.push_back(cur->left);
+                    vec.push_back(cur->right);
+                }
+                else {
+                    stream << "#,";
+                }
+                index++;
+            }
+        }
+        auto str = stream.str();
+        unsigned long endPos = str.length() - 1;
+        while (endPos > 0) {
+            auto c = str[endPos];
+            if (c == ',' || c == '#' || c == ' ') {
+                endPos--;
+            }
+            else {
+                break;
+            }
+        }
+        return str.substr(0, endPos + 1);
+    }
+
+    TreeNode * deserialize(string &data) {
+        vector<string> vec = split(data, ",");
+        for (int i = 0; i < vec.size(); ++i) {
+            cout << vec[i] << endl;
+        }
+
+        return nullptr;
+    }
 
 
 
     void test() {
+
+        TreeNode node0 = TreeNode(0);
+        TreeNode node1 = TreeNode(1);
+        TreeNode node2 = TreeNode(2);
+        TreeNode node3 = TreeNode(3);
+        TreeNode *root = &node0;
+        root->right = &node1;
+        node1.left = &node2;
+        node1.right = &node3;
+        string str = serialize(root);
+        cout << str << endl;
+        deserialize(str);
+
 
 //        vector<int> arrA = {1,2,3,4};
 //        vector<int> arrB = {2,4,5,6};

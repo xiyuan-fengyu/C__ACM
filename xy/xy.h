@@ -13,7 +13,7 @@ namespace xy {
 
     using namespace std;
 
-//----    join 相关函数 start    ---------------------------------------------------------------------------------------
+    //---- 字符串相关函数 start ----------------------------------------------------------------------------------------
 
     /**
      * 这个函数一定要在其他重载之前声明，否者会报类型推导失败的问题
@@ -65,7 +65,42 @@ namespace xy {
         return join(begin, 0, length, joinStr);
     }
 
-//----    join 相关函数 end    -----------------------------------------------------------------------------------------
+    static vector<string> split(string source, string divider) {
+        vector<string> result;
+        size_t last = 0;
+        size_t index = source.find_first_of(divider, last);
+        while (index != string::npos) {
+            result.push_back(source.substr(last, index - last));
+            last = index + 1;
+            index = source.find_first_of(divider, last);
+        }
+        if (index - last > 0) {
+            result.push_back(source.substr(last, index - last));
+        }
+        return result;
+    }
+
+    //---- 字符串相关函数 end ------------------------------------------------------------------------------------------
+
+
+
+
+
+    //----    TreeNode 定义 start    -----------------------------------------------------------------------------------
+
+    class TreeNode {
+    public:
+        int val;
+        TreeNode *left;
+        TreeNode *right;
+        TreeNode(int val) {
+            this->val = val;
+            this->left = this->right = nullptr;
+        }
+    };
+
+    //----    TreeNode 定义 end    -------------------------------------------------------------------------------------
+
 
 }
 
