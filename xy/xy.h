@@ -2,8 +2,8 @@
 // Created by xiyuan_fengyu on 2017/9/18.
 //
 
-#ifndef C_ACM_UTIL_H
-#define C_ACM_UTIL_H
+#ifndef C_ACM_XY_H
+#define C_ACM_XY_H
 
 #include <iostream>
 #include <vector>
@@ -69,4 +69,4 @@ namespace xy {
 
 }
 
-#endif //C_ACM_UTIL_H
+#endif //C_ACM_XY_H
