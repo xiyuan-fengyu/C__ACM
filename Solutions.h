@@ -201,8 +201,8 @@ public:
 
 
     string serialize(TreeNode *root) {
-        ostringstream stream;
         if (root != nullptr) {
+            stringstream stream;
             vector<TreeNode*> vec;
             vec.push_back(root);
 
@@ -219,46 +219,70 @@ public:
                 }
                 index++;
             }
-        }
-        auto str = stream.str();
-        unsigned long endPos = str.length() - 1;
-        while (endPos > 0) {
-            auto c = str[endPos];
-            if (c == ',' || c == '#' || c == ' ') {
-                endPos--;
+
+            auto str = stream.str();
+            unsigned long endPos = str.length() - 1;
+            while (endPos > 0) {
+                auto c = str[endPos];
+                if (c == ',' || c == '#' || c == ' ') {
+                    endPos--;
+                }
+                else {
+                    break;
+                }
             }
-            else {
-                break;
-            }
+            return str.substr(0, endPos + 1);
         }
-        return str.substr(0, endPos + 1);
+        return "#";
     }
 
-    TreeNode * deserialize(string &data) {
-        vector<string> vec = split(data, ",");
-        for (int i = 0; i < vec.size(); ++i) {
-            cout << vec[i] << endl;
-        }
+    TreeNode * deserialize(string data) {
+        if (data == "#") return nullptr;
 
-        return nullptr;
+        vector<string> vec = split(data, ",");
+        vector<TreeNode*> nodes;
+        auto *root = new TreeNode(atoi(vec[0].c_str()));
+        nodes.push_back(root);
+        TreeNode *curNode = root;
+
+        size_t parentI = 0;
+        size_t childI = 1;
+        size_t size = vec.size();
+        while (childI < size) {
+            if (vec[childI] != "#") {
+                TreeNode *node = new TreeNode(atoi(vec[childI].c_str()));
+                curNode->left = node;
+                nodes.push_back(node);
+            }
+
+            if (++childI < size) {
+                if (vec[childI] != "#") {
+                    TreeNode *node = new TreeNode(atoi(vec[childI].c_str()));
+                    curNode->right = node;
+                    nodes.push_back(node);
+                }
+            }
+
+            if (++childI < size) {
+                while (++parentI < size && (curNode = nodes[parentI]) == nullptr);
+            }
+        }
+        return root;
     }
 
 
 
     void test() {
 
-        TreeNode node0 = TreeNode(0);
-        TreeNode node1 = TreeNode(1);
-        TreeNode node2 = TreeNode(2);
-        TreeNode node3 = TreeNode(3);
-        TreeNode *root = &node0;
-        root->right = &node1;
-        node1.left = &node2;
-        node1.right = &node3;
-        string str = serialize(root);
-        cout << str << endl;
-        deserialize(str);
 
+
+//        auto *root = new TreeNode(1);
+//        root->right = new TreeNode(2);
+//        root->right->left = new TreeNode(3);
+//        root->right->left->right = new TreeNode(4);
+//        string str = serialize(root);
+//        cout << str << endl;
+//        cout << serialize(deserialize(str)) << endl;
 
 //        vector<int> arrA = {1,2,3,4};
 //        vector<int> arrB = {2,4,5,6};

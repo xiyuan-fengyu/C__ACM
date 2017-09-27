@@ -65,7 +65,7 @@ namespace xy {
         return join(begin, 0, length, joinStr);
     }
 
-    static vector<string> split(string source, string divider) {
+    static vector<string> split(string &source, string divider) {
         vector<string> result;
         size_t last = 0;
         size_t index = source.find_first_of(divider, last);
