@@ -1,4 +1,5 @@
-#include "Solutions.h"
+
+#include "src/Solutions.h"
 
 int main() {
     Solutions().test();
