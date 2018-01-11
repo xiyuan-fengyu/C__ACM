@@ -265,9 +265,11 @@ public:
 
     void test() {
 
-        cout << reverse(120) << endl;
-        cout << reverse(-120) << endl;
-        cout << reverse(1534236469) << endl;
+
+//        cout << reverse(120) << endl;
+//        cout << reverse(-120) << endl;
+//        cout << reverse(1534236469) << endl;
+
 
 //        cout << convert("PAYPALISHIRING", 3) << endl;
 //        cout << zigzag("PAYPALISHIRING", 3) << endl;
