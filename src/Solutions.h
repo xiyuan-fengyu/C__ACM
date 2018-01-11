@@ -207,8 +207,61 @@ public:
         return s.substr((maxPos - 1) / 2 - cache[maxPos] / 2 + 1, cache[maxPos] - 1);
     }
 
+
+    string convert(const string &s, int numRows) {
+        if (s.length() <= numRows || numRows < 2) return s;
+
+        int len = s.length();
+        int col, modCol, sIndex;
+        stringstream ss;
+        for (int i = 0; i < numRows; ++i) {
+            col = 0;
+            while (true) {
+                modCol = col % (numRows - 1);
+                sIndex = col / (numRows - 1) * (numRows * 2 - 2) + (modCol == 0 ? i : numRows + modCol - 1);
+                if (sIndex >= len) break;
+                ss << s[sIndex];
+                if (modCol == 0) col += i + 1 == numRows ? numRows - 1 : numRows - i - 1;
+                else col += numRows - 1 - modCol;
+            }
+        }
+        return ss.str();
+    }
+
+    string zigzag(const string &s, int numRows) {
+        int len = s.length();
+        int col, modCol, sIndex;
+        stringstream ss;
+        for (int i = 0; i < numRows; ++i) {
+            col = 0;
+            while (true) {
+                modCol = col % (numRows - 1);
+                if (modCol == 0 || modCol + i + 1 == numRows) {
+                    sIndex = col / (numRows - 1) * (numRows * 2 - 2) + (modCol == 0 ? i : numRows + modCol - 1);
+                    if (sIndex >= len) {
+                        ss << '\n';
+                        break;
+                    }
+                    ss << s[sIndex];
+                }
+                else ss << ' ';
+                col++;
+            }
+        }
+        return ss.str();
+    }
+
     void test() {
 
+
+
+
+//        cout << convert("PAYPALISHIRING", 3) << endl;
+//        cout << zigzag("PAYPALISHIRING", 3) << endl;
+//        cout << convert("abcdefghijklmnopqrstuvwxyz", 4) << endl;
+//        cout << zigzag("abcdefghijklmnopqrstuvwxyz", 4) << endl;
+
+        
 //        cout << longestPalindromeManacher("cccaacc") << endl;
 //        cout << longestPalindrome("abaabc") << endl;
 
