@@ -8,6 +8,7 @@
 #include <vector>
 #include <iostream>
 #include <unordered_map>
+#include <climits>
 #include "util/util.h"
 #include "model/ListNode.h"
 
@@ -76,54 +77,145 @@ public:
 
 
     double findMedianSortedArrays(vector<int>& nums1, vector<int>& nums2) {
-        int i = -1;
-        int j = -1;
-        int index = -1;
         int size1 = static_cast<int>(nums1.size());
         int size2 = static_cast<int>(nums2.size());
-        int mid = (size1 + size2) / 2;
-        int midLeft = (size1 + size2) % 2 == 0 ? mid - 1 : -1;
-        int midLeftVal = 0;
-        int ij;
-        while (i + 1 < size1 || j + 1 < size2) {
-            if (i + 1 < size1) {
-                if (j + 1 < size2) {
-                    if (nums1[i + 1] <= nums2[j + 1]) {
-                        i++;
-                        ij = 0;
+        if (size1 > size2) return findMedianSortedArrays(nums2, nums1);
+
+        int left = 0;
+        int right = size1;
+        while (true) {
+            int i = (left + right) / 2;
+            int j = (size1 + size2) / 2 - i;
+            int leftMax = max(i > 0 ? nums1[i - 1] : INT_MIN, j > 0 ? nums2[j - 1] : INT_MIN);
+            int rightMin = min(i < size1 ? nums1[i] : INT_MAX, j < size2 ? nums2[j] : INT_MAX);
+            if (leftMax <= rightMin) {
+                return (size1 + size2) % 2 ? rightMin : (leftMax + rightMin) / 2.0;
+            }
+            else {
+                if (i < size1 && nums1[i] == rightMin) left = i + 1;
+                else right = i - 1;
+            }
+        }
+    }
+
+
+
+    string longestPalindrome(string s) {
+        int len = s.size();
+        if (len <= 1) return s;
+
+        int left, right, maxLeft, tempMax, resMax = 0;
+        for (int i = 0; i < len - 1; ++i) {
+            if (s[i] == s[i + 1]) {
+                left = i - 1;
+                right = i + 2;
+                tempMax = 2;
+                while (left >= 0 && right < len) {
+                    if (s[left] == s[right]) {
+                        left--;
+                        right++;
+                        tempMax += 2;
                     }
-                    else {
-                        j++;
-                        ij = 1;
-                    }
+                    else break;
                 }
-                else {
-                    i++;
-                    ij = 0;
+                if (resMax < tempMax) {
+                    resMax = tempMax;
+                    maxLeft = left + 1;
+                }
+            }
+
+            left = i - 1;
+            right = i + 1;
+            tempMax = 1;
+            while (left >= 0 && right < len) {
+                if (s[left] == s[right]) {
+                    left--;
+                    right++;
+                    tempMax += 2;
+                }
+                else break;
+            }
+
+            if (resMax < tempMax) {
+                resMax = tempMax;
+                maxLeft = left + 1;
+            }
+        }
+        return s.substr(maxLeft, resMax);
+    }
+
+
+
+    string longestPalindromeManacher(string s) {
+        int len = s.size();
+        if (len <= 1) return s;
+
+        // 不用构造 #0#1#0#这种字符串，而且可以跳过#这种位置的相等校验(通过设置 left, right的初始值，变化量为2)
+        len = len * 2 + 1;
+        int cache[len];
+        int pos = -1;
+        int maxR = -1;
+        int maxPos = -1;
+        int maxLen = -1;
+        int left, right;
+
+        for (int i = 0; i < len; ++i) {
+            if (i > maxR) {
+                left = i % 2 ? i - 2 : i - 1;
+                right = 2 * i - left;
+                while (left >= 0 && right < len) {
+                    if (s[left / 2] == s[right / 2]) {
+                        left -= 2;
+                        right += 2;
+                    }
+                    else break;
+                }
+                pos = i;
+                maxR = right - 1;
+                cache[i] = right - i;
+
+                if (maxLen < cache[i] - 1) {
+                    maxLen = cache[i] - 1;
+                    maxPos = i;
                 }
             }
             else {
-                j++;
-                ij = 1;
-            }
-            index++;
+                int rI = cache[pos * 2 - i];
+                if (rI < maxR - i + 1) cache[i] = rI;
+                else {
+                    right = (maxR + 1) % 2 ? maxR + 1 : maxR + 2;
+                    left = i * 2 - right;
+                    while (left >= 0 && right < len) {
+                        if (s[left / 2] == s[right / 2]) {
+                            left -= 2;
+                            right += 2;
+                        }
+                        else break;
+                    }
+                    pos = i;
+                    maxR = right - 1;
+                    cache[i] = right - i;
 
-            if (midLeft > -1 && index == midLeft) {
-                midLeftVal = ij ? nums2[j] : nums1[i];
-            }
-            if (index == mid) {
-                int temp = ij ? nums2[j] : nums1[i];
-                return midLeft > -1 ? (midLeftVal + temp) / 2.0 : temp;
+                    if (maxLen < cache[i] - 1) {
+                        maxLen = cache[i] - 1;
+                        maxPos = i;
+                    }
+                }
             }
         }
-        return 0;
+
+        return s.substr((maxPos - 1) / 2 - cache[maxPos] / 2 + 1, cache[maxPos] - 1);
     }
 
     void test() {
 
-        vector<int> nums1 {1, 3};
-        vector<int> nums2 {2, 4};
-        cout << findMedianSortedArrays(nums1, nums2) << endl;
+//        cout << longestPalindromeManacher("cccaacc") << endl;
+//        cout << longestPalindrome("abaabc") << endl;
+
+
+//        vector<int> nums1 {1, 3};
+//        vector<int> nums2 {2};
+//        cout << findMedianSortedArrays(nums1, nums2) << endl;
 
 
 //        cout << lengthOfLongestSubstring("abcabcbb") << endl;
