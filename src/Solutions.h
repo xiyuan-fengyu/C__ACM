@@ -263,7 +263,38 @@ public:
     }
 
 
+
+    int myAtoi(const string& str) {
+        long res = 0;
+        int np = 0;
+        for (char i : str) {
+            if (np) {
+                if (i >= '0' && i <= '9') {
+                    res = res * 10 + int(i - '0');
+                    if (np == 1 && res > INT_MAX) return INT_MAX;
+                    else if (np == -1 && -res < INT_MIN) return INT_MIN;
+                }
+                else break;
+            }
+            else {
+                if (i == '-') np = -1;
+                else if (i == '+') np = 1;
+                else if (i >= '0' && i <= '9') {
+                    np = 1;
+                    res = int(i - '0');
+                }
+                else if (i != ' ') return 0;
+            }
+        }
+        return int(res * np);
+    }
+
+
     void test() {
+
+//        cout << myAtoi("123456") << endl;
+//        cout << myAtoi("-123456") << endl;
+//        cout << myAtoi(" -123456s") << endl;
 
 
 //        cout << reverse(120) << endl;
