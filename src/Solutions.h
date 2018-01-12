@@ -311,9 +311,129 @@ public:
     }
 
 
+
+    bool isMatch(const string &s, const string &p) {
+        auto sLen = int(s.length());
+        auto pLen = int(p.length());
+        bool cache[sLen + 1][pLen + 1] {};
+        cache[sLen][pLen] = true;
+        bool firstMatch;
+        for (int i = sLen; i >= 0; --i) {
+            for (int j = pLen - 1; j >= 0; --j) {
+                firstMatch = i < sLen && (p[j] == s[i] || p[j] == '.');
+                if (j + 1 < pLen && p[j + 1] == '*') {
+                    cache[i][j] = cache[i][j + 2] || (firstMatch && cache[i + 1][j]);
+                }
+                else {
+                    cache[i][j] = firstMatch && cache[i + 1][j + 1];
+                }
+            }
+        }
+        return cache[0][0];
+    }
+
+
+    // 266ms
+    int maxAreaV1(vector<int>& height) {
+        int maxA = 0;
+        int size = static_cast<int>(height.size());
+        for (int i = size - 1, j, tempA, tempH; i > 0; --i) {
+            j = 0;
+            tempH = height[i];
+            while (j < i && maxA / (i - j) < tempH) {
+                tempA = min(height[j], tempH) * (i - j);
+                if (tempA > maxA) maxA = tempA;
+                j++;
+            }
+        }
+        return maxA;
+    }
+
+    // 27 ms
+    int maxAreaV2(vector<int>& height) {
+        int maxA = 0;
+
+        // 找到拱形的数据变化 或者 一直递增的数据变化，并记录其index， 例如：
+        // 1, 2, 3, 4, 2, 1
+        // 1, 3, 5, 6
+        vector<tuple<int, int>> indexedHeight;
+        int lastMaxH = -1, lastMaxIndex = 0, h;
+        for (int i = 0, size = int(height.size()); i < size; ++i) {
+            h = height[i];
+            while (!indexedHeight.empty()) {
+                auto temp = indexedHeight.back();
+                if (get<0>(temp) == lastMaxIndex) break;
+                if (get<1>(temp) <= h) indexedHeight.pop_back();
+                else break;
+            }
+            if (h > lastMaxH) {
+                lastMaxH = h;
+                lastMaxIndex = i;
+            }
+            indexedHeight.push_back(make_tuple(i, h));
+        }
+
+        // 左右两端各一个指针， 当两端 一样高时，都像中靠拢一步，否则较矮的指针向中靠一步
+        int i = 0, j = int(indexedHeight.size() - 1), leftH, rightH;
+        tuple<int, int> left, right;
+        while (i < j) {
+            left = indexedHeight[i];
+            right = indexedHeight[j];
+            leftH = get<1>(left);
+            rightH = get<1>(right);
+            maxA = max(maxA, min(leftH, rightH) * (get<0>(right) - get<0>(left)));
+            if (leftH == rightH) {
+                i++;
+                j--;
+            }
+            else if (leftH < rightH) i++;
+            else j--;
+        }
+        return maxA;
+    }
+
+    int maxArea(vector<int>& height) {
+        int maxA = 0;
+        // 左右两端各一个指针， 分别记录两端遇到的最大值，每当有一端最大值更新时，
+        // 就计算一次最大值，当两端 最大值一样高时，都像中靠拢一直到找到更高的，否则较矮的指针向中靠拢
+        int i = 0, j = int(height.size() - 1), leftMaxH, rightMaxH, tempMax;
+        while (i < j) {
+            leftMaxH = height[i];
+            rightMaxH = height[j];
+            tempMax = (leftMaxH < rightMaxH ? leftMaxH : rightMaxH) * (j - i);
+            if (tempMax > maxA) maxA = tempMax;
+            if (leftMaxH == rightMaxH) {
+                while (i < j && height[i] <= leftMaxH) i++;
+                while (i < j && height[j] <= rightMaxH) j--;
+            }
+            else if (leftMaxH < rightMaxH) {
+                while (i < j && height[i] <= leftMaxH) i++;
+            }
+            else while (i < j && height[j] <= rightMaxH) j--;
+        }
+        return maxA;
+    }
+
+
     void test() {
 
-        cout << isPalindrome(2147447412) << endl;
+//        vector<int> heights {1,2,3,2,4,1,2,3,4,1};
+//        cout << maxArea(heights) << endl;
+
+
+//        cout << isMatch("aa", "aa*a") << endl;
+//        cout << isMatch("babcacacbbbacbaabbb", ".*.*b*ab*a*aa*b*.*c") << endl;
+//        cout << isMatch("aa", "a") << endl;
+//        cout << isMatch("aa", "a.") << endl;
+//        cout << isMatch("aa", "a*") << endl;
+//        cout << isMatch("ab", ".*") << endl;
+//        cout << isMatch("", "a*") << endl;
+//        cout << isMatch("", "") << endl;
+//        cout << isMatch("", ".") << endl;
+//        cout << isMatch("abcddde", "a.cd*e") << endl;
+
+
+//        cout << isPalindrome(2147447412) << endl;
 
 
 //        cout << myAtoi("123456") << endl;
