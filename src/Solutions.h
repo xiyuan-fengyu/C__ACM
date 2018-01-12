@@ -290,7 +290,31 @@ public:
     }
 
 
+    bool isPalindrome(int x) {
+        if (x < 0) return false;
+
+        int l = x, r = x, tenL = 1, tenR = 10;
+        while (l) {
+            if (l > 9) tenL *= 10;
+            l /= 10;
+        }
+
+        l = x;
+        while (tenL >= tenR) {
+            if (l / tenL != r % 10) return false;
+            l %= tenL;
+            tenL /= 10;
+            r /= 10;
+            tenR *= 10;
+        }
+        return true;
+    }
+
+
     void test() {
+
+        cout << isPalindrome(2147447412) << endl;
+
 
 //        cout << myAtoi("123456") << endl;
 //        cout << myAtoi("-123456") << endl;
