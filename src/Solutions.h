@@ -8,6 +8,8 @@
 #include <vector>
 #include <iostream>
 #include <unordered_map>
+#include <algorithm>
+#include <iterator>
 #include <climits>
 #include "util/util.h"
 #include "model/ListNode.h"
@@ -425,14 +427,63 @@ public:
      加线乘千：在一个罗马数字的上方加上一条横线或者在右下方写M，表示将这个数字乘以1000，即是原数的1000倍。同理，如果上方有两条横线，即是原数的1000000倍。
      单位限制：同样单位只能出现3次，如40不能表示为XXXX，而要表示为XL。
      */
-    string intToRoman(int num) {
 
+
+    /**
+     思路1： 直接把 1, 2, ..., 9; 10, 20, 30, ..., 90; 100, 200, ..., 900; 1000, 2000, 3000 这些数字通过表存储起来，然后直接查表即可；
+     */
+    string romans[30] = {
+            "I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX",
+            "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC",
+            "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM",
+            "M", "MM", "MMM"
+    };
+
+    // 104ms
+    string intToRomanV1(int num) {
+        vector<string> rs;
+        int power = 0;
+        while (num) {
+            if (num % 10 > 0) {
+                rs.push_back(romans[power * 9 + num % 10 - 1]);
+            }
+            power++;
+            num /= 10;
+        }
+        stringstream ss;
+        copy(rs.rbegin(), rs.rend(), std::ostream_iterator<string>(ss, ""));
+        return ss.str();
+    }
+
+
+    /**
+     思路2： 同样是查表，但是表中的特殊数字更少了，而且是正向拼接字符串，节省了很多时间和空间
+     */
+    string romanArr[13] {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+
+    int numArr[13] {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+    // 75ms
+    string intToRoman(int num) {
+        string res;
+        int index = 0;
+        while (num) {
+            if (num >= numArr[index]) {
+                res += romanArr[index];
+                num -= numArr[index];
+            }
+            else {
+                index++;
+            }
+        }
+        return res;
     }
 
 
     void test() {
 
 
+
+//        cout << intToRoman(3786) << endl;
 
 
 //        vector<int> heights {1,2,3,2,4,1,2,3,4,1};
