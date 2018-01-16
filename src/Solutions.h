@@ -479,10 +479,72 @@ public:
     }
 
 
+
+    int romanToInt(string s) {
+        int res = 0;
+        for (int  i = 0, len = int(s.length()); i < len; ++i) {
+            char cur = s[i];
+            if (cur == 'M') res += 1000;
+            else if (cur == 'C') {
+                auto next = char(i + 1 < len ? s[i + 1] : '\0');
+                if (next == 'M') res += 900, ++i;
+                else if (next == 'D') res += 400, ++i;
+                else res += 100;
+            }
+            else if (cur == 'D') res += 500;
+            else if (cur == 'X') {
+                auto next = char(i + 1 < len ? s[i + 1] : '\0');
+                if (next == 'C') res += 90, ++i;
+                else if (next == 'L') res += 40, ++i;
+                else res += 10;
+            }
+            else if (cur == 'L') res += 50;
+            else if (cur == 'I') {
+                auto next = char(i + 1 < len ? s[i + 1] : '\0');
+                if (next == 'X') res += 9, ++i;
+                else if (next == 'V') res += 4, ++i;
+                else res += 1;
+            }
+            else if (cur == 'V') res += 5;
+        }
+        return res;
+    }
+
+
+
+    string longestCommonPrefix(vector<string>& strs) {
+        if (strs.size() == 1) return strs[0];
+
+        string str;
+        if (!strs.empty()) {
+            string firstStr = strs[0];
+            char c;
+            int size = static_cast<int>(strs.size());
+            for (int i = 0, len = static_cast<int>(firstStr.length()); i < len; ++i) {
+                c = firstStr[i];
+                for (int j = 1; j < size; ++j) {
+                    if (strs[j][i] != c) return str;
+                }
+                str.push_back(c);
+            }
+        }
+        return str;
+    }
+
+
     void test() {
 
 
 
+//        vector<string> strs {
+//                "abcd",
+//                "abc",
+//                "ab"
+//        };
+//        cout << longestCommonPrefix(strs) << endl;
+
+
+//        cout << romanToInt(intToRoman(3786)) << endl;
 //        cout << intToRoman(3786) << endl;
 
 
