@@ -13,9 +13,10 @@
 #include <climits>
 #include "util/util.hpp"
 #include "model/ListNode.hpp"
-
+#include <algorithm>
 
 using namespace std;
+using namespace xiyuan;
 
 class Solutions {
 public:
@@ -535,15 +536,43 @@ public:
 
     vector<vector<int>> threeSum(vector<int>& nums) {
         vector<vector<int>> res;
-
+        sort(nums.begin(), nums.end());
+        int maxIndex = int(nums.size() - 1);
+        for (int i = 0; i + 1 < maxIndex; ++i) {
+            if (i == 0 || nums[i] != nums[i - 1]) {
+                int left = i + 1;
+                int right = maxIndex;
+                int target = -nums[i];
+                while (left < right) {
+                    int sum = nums[left] + nums[right];
+                    if (sum == target) {
+                        res.emplace_back(vector<int>{-target, nums[left], nums[right]});
+                        while (left < right && nums[left] == nums[++left]);
+                        while (left < right && nums[right] == nums[--right]);
+                    }
+                    else if (sum < target) {
+                        ++left;
+                    }
+                    else {
+                        --right;
+                    }
+                }
+            }
+        }
         return res;
     }
 
     void test() {
-        vector<int> nums{-1,0,1,2,-1,-4};
-        auto res = threeSum(nums);
 
 
+
+
+////        vector<int> nums{-2,0,0,2,2};
+//        vector<int> nums{-1, 0, 1, 2, -1, -4};
+//        auto res = threeSum(nums);
+//        for (auto &item : res) {
+//            cout << item << endl;
+//        }
 
 
 //        vector<string> strs {
