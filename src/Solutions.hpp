@@ -562,7 +562,39 @@ public:
         return res;
     }
 
+
+
+    int threeSumClosest(vector<int>& nums, int target) {
+        auto sumClosest = nums[0] + nums[1] + nums[2];
+        sort(nums.begin(), nums.end());
+        auto maxIndex = int(nums.size() - 1);
+        for (int i = 0; i + 1 < maxIndex; ++i) {
+            if (i == 0 || nums[i] == nums[i - 1]) {
+                int left = i + 1;
+                int right = maxIndex;
+                while (left < right) {
+                    int sum = nums[i] + nums[left] + nums[right];
+                    if (sum == target) return sum;
+
+                    if (abs(target - sumClosest) > abs(target - sum)) {
+                        sumClosest = sum;
+                    }
+                    if (sum < target) {
+                        while (left < right && nums[left] == nums[++left]);
+                    }
+                    else {
+                        while (left < right && nums[right] == nums[--right]);
+                    }
+                }
+            }
+        }
+        return sumClosest;
+    }
+
     void test() {
+        vector<int> nums{-3,-2,-5,3,-4};
+        int target = -1;
+        cout << threeSumClosest(nums, target) << endl;
 
 
 
