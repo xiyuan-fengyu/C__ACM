@@ -11,8 +11,8 @@
 #include <algorithm>
 #include <iterator>
 #include <climits>
-#include "util/util.h"
-#include "model/ListNode.h"
+#include "util/util.hpp"
+#include "model/ListNode.hpp"
 
 
 using namespace std;
@@ -532,7 +532,17 @@ public:
     }
 
 
+
+    vector<vector<int>> threeSum(vector<int>& nums) {
+        vector<vector<int>> res;
+
+        return res;
+    }
+
     void test() {
+        vector<int> nums{-1,0,1,2,-1,-4};
+        auto res = threeSum(nums);
+
 
 
 
@@ -595,8 +605,8 @@ public:
 //        cout << lengthOfLongestSubstring("abcabcbb") << endl;
 
 
-//        ListNode* listNode1 = ListNode::parse("2 -> 4 -> 3");
-//        ListNode* listNode2 = ListNode::parse("5 -> 6 -> 4");
+//        auto listNode1 = ListNode::parse("2 -> 4 -> 3");
+//        auto listNode2 = ListNode::parse("5 -> 6 -> 4");
 //        cout << *addTwoNumbers(listNode1, listNode2) << endl;
 
 
