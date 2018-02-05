@@ -569,9 +569,10 @@ public:
         sort(nums.begin(), nums.end());
         auto maxIndex = int(nums.size() - 1);
         for (int i = 0; i + 1 < maxIndex; ++i) {
-            if (i == 0 || nums[i] == nums[i - 1]) {
+            if (i == 0 || nums[i] != nums[i - 1]) {
                 int left = i + 1;
                 int right = maxIndex;
+                bool nextBreak = false;
                 while (left < right) {
                     int sum = nums[i] + nums[left] + nums[right];
                     if (sum == target) return sum;
@@ -579,11 +580,23 @@ public:
                     if (abs(target - sumClosest) > abs(target - sum)) {
                         sumClosest = sum;
                     }
+                    if (nextBreak) break;
+
                     if (sum < target) {
-                        while (left < right && nums[left] == nums[++left]);
+                        if (left + 1 < right) left++;
+                        else if (right < maxIndex) {
+                            right++;
+                            nextBreak = true;
+                        }
+                        else break;
                     }
                     else {
-                        while (left < right && nums[right] == nums[--right]);
+                        if (left + 1 < right) right--;
+                        else if (left > i + 1) {
+                            left--;
+                            nextBreak = true;
+                        }
+                        else break;
                     }
                 }
             }
@@ -592,9 +605,21 @@ public:
     }
 
     void test() {
-        vector<int> nums{-3,-2,-5,3,-4};
-        int target = -1;
-        cout << threeSumClosest(nums, target) << endl;
+
+
+
+
+
+//        {
+//            vector<int> nums{-3,-2,-5,3,-4};
+//            int target = -1;
+//            cout << threeSumClosest(nums, target) << endl;
+//        }
+//        {
+//            vector<int> nums{-55,-24,-18,-11,-7,-3,4,5,6,9,11,23,33};
+//            int target = 0;
+//            cout << threeSumClosest(nums, target) << endl;
+//        }
 
 
 
