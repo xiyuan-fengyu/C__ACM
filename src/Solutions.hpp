@@ -604,9 +604,46 @@ public:
         return sumClosest;
     }
 
+
+
+    vector<string> letterCombinations(string digits) {
+        vector<string> result;
+        vector<string> mappings = {"", "", "abc", "def", "ghi", "jkl", "mno", "pqrs", "tuv", "wxyz"};
+        for (char c : digits) {
+            string mp = mappings[int(c - '0')];
+            size_t curSize = result.size();
+            if (curSize == 0) {
+                for (char cc : mp) {
+                    string str{cc};
+                    result.push_back(str);
+                }
+            }
+            else {
+                for (size_t i = 1, size = mp.size(); i < size; ++i) {
+                    char cc = mp[i];
+                    for (size_t j = 0; j < curSize; ++j) {
+                        result.emplace_back(result[j] + cc);
+                    }
+                }
+                char cc = mp[0];
+                for (size_t j = 0; j < curSize; ++j) {
+                    result[j] += cc;
+                }
+            }
+        }
+        return result;
+    }
+
     void test() {
 
 
+
+
+
+//        {
+//            auto res = letterCombinations("234");
+//            cout << res << endl;
+//        }
 
 
 
