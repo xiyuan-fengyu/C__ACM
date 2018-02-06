@@ -806,8 +806,137 @@ public:
         return lists[0];
     }
 
+
+
+    ListNode* swapPairs(ListNode* head) {
+        if (head && !head->next) return head;
+        ListNode tempHead(0);
+        ListNode *cur = &tempHead;
+        ListNode *next = head;
+        while (next) {
+            if (next->next) {
+                cur->next = next->next;
+                next->next = next->next->next;
+                cur->next->next = next;
+                cur = next;
+                next = next->next;
+            }
+            else break;
+        }
+        return tempHead.next;
+    }
+
+
+
+    ListNode* reverseKGroupV1(ListNode* head, int k) {
+        if (k <= 1) return head;
+
+        ListNode *tail = nullptr;
+        ListNode *tempTail = nullptr;
+        ListNode *newHead = nullptr;
+        ListNode *tempHead;
+        ListNode *reverseNext = nullptr;
+        ListNode *tempReverseNext = nullptr;
+        ListNode *next = head;
+        while (next) {
+            reverseNext = next;
+            tempTail = next;
+            tempHead = nullptr;
+
+            int index = 0;
+            while (next && index < k) {
+                next = next->next;
+                index++;
+            }
+
+            if (index == k) {
+                while (reverseNext != next) {
+                    tempReverseNext = reverseNext->next;
+                    reverseNext->next = tempHead;
+                    tempHead = reverseNext;
+                    reverseNext = tempReverseNext;
+                }
+                if (!newHead) newHead = tempHead;
+                if (tail) tail->next = tempHead;
+                tail = tempTail;
+            }
+            else {
+                if (tail) tail->next = tempTail;
+                break;
+            }
+        }
+        return newHead == nullptr ? head : newHead;
+    }
+
+    ListNode* reverseKGroup(ListNode* head, int k) {
+        if (k <= 1 || !head || !head->next) return head;
+        int len = 0;
+        ListNode *cur = head;
+        while (cur) {
+            len++;
+            cur = cur->next;
+        }
+
+        if (len < k) return head;
+        ListNode tempHead(0);
+        ListNode *newHead = &tempHead;
+        ListNode *groupHead = nullptr;
+        ListNode *tail = newHead;
+        ListNode *tempTail;
+        cur = head;
+        for (int i = 0, n = len / k; i < n; ++i) {
+            tempTail = cur;
+            for (int j = 0; j < k; ++j) {
+                tail->next = cur->next;
+                cur->next = groupHead;
+                groupHead = cur;
+                cur = tail->next;
+            }
+            tail->next = groupHead;
+            tail = tempTail;
+        }
+        tail->next = cur;
+        return newHead->next;
+    }
+
+
+
+    int removeDuplicates(vector<int>& nums) {
+        auto size = int(nums.size());
+        if (size <= 1) return size;
+        int count = 1;
+        for (int i = 1; i < size; ++i) {
+            if (nums[count - 1] != nums[i]) {
+                nums[count++] = nums[i];
+            }
+        }
+        return count;
+    }
+
     void test() {
 
+
+
+
+
+//        {
+//            vector<int> nums{1,1,2,2,3,3,3};
+//            cout << removeDuplicates(nums) << endl;
+//            cout << nums << endl;
+//        }
+
+
+//        {
+//            auto l1 = ListNode::parse("1->2->3->4->5->6");
+//            cout << *reverseKGroup(l1, 3) << endl;
+//        }
+
+
+
+//        {
+//            auto l1 = ListNode::parse("1->2->3");
+//            cout << *swapPairs(l1) << endl;
+//        }
 
 
 
