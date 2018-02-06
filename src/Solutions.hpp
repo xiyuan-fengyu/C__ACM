@@ -634,9 +634,70 @@ public:
         return result;
     }
 
+
+
+
+    vector<vector<int>> fourSum(vector<int>& nums, int target) {
+        vector<vector<int>> res;
+        if (nums.size() <= 3) return res;
+        sort(nums.begin(), nums.end());
+        if (nums.back() * 4 < target) return res;
+        size_t maxIndex = nums.size() - 1;
+        for (size_t i = 0; i + 2 < maxIndex; ++i) {
+            if ((i == 0 || nums[i] != nums[i - 1]) && nums[i] * 4 <= target) {
+                int target3Sum = target - nums[i];
+                if (nums.back() * 3 < target3Sum) continue;
+                for (size_t j = i + 1; j + 1 < maxIndex; ++j) {
+                    if ((j == i + 1 || nums[j] != nums[j - 1]) && nums[j] * 3 <= target3Sum) {
+                        int target2Sum = target3Sum - nums[j];
+                        size_t left = j + 1;
+                        size_t right = maxIndex;
+                        while (left < right) {
+                            int sum = nums[left] + nums[right];
+                            if (sum == target2Sum) {
+                                res.push_back({nums[i], nums[j], nums[left], nums[right]});
+                                while (left < right && nums[left] == nums[++left]);
+                                while (left < right && nums[right] == nums[--right]);
+                            }
+                            else if (sum < target2Sum) {
+                                left++;
+                            }
+                            else {
+                                right--;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
     void test() {
 
 
+
+
+
+
+//        {
+//            vector<int> nums{1, 0, -1, 0, -2, 2};
+//            int target = 0;
+//            auto res = fourSum(nums, target);
+//            for_each(res.begin(), res.end(), [](vector<int> &item) {
+//               cout << item << endl;
+//            });
+//            cout << endl;
+//        }
+//        {
+//            vector<int> nums{2,1,0,-1};
+//            int target = 2;
+//            auto res = fourSum(nums, target);
+//            for_each(res.begin(), res.end(), [](vector<int> &item) {
+//                cout << item << endl;
+//            });
+//            cout << endl;
+//        }
 
 
 
