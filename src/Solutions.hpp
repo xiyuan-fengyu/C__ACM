@@ -756,9 +756,74 @@ public:
         return tempHead.next;
     }
 
+
+
+    vector<string> generateParenthesis(int n) {
+        vector<string> res;
+        if (n > 0) {
+            vector<int> leftNums;
+            string fisrt{'('};
+            res.push_back(fisrt);
+            leftNums.push_back(1);
+            for (int i = 1, size = n * 2; i < size; ++i) {
+                auto curSize = int(res.size());
+                for (int j = 0; j < curSize; ++j) {
+                    auto leftNum = leftNums[j] + (int(res[j].size()) - leftNums[j]) / 2;
+                    if (leftNum < n && leftNums[j] > 0) {
+                        res.push_back(res[j] + ')');
+                        res[j].push_back('(');
+                        leftNums.push_back(leftNums[j] - 1);
+                        leftNums[j]++;
+                    }
+                    else if (leftNum < n) {
+                        res[j].push_back('(');
+                        leftNums[j]++;
+                    }
+                    else {
+                        res[j].push_back(')');
+                        leftNums[j]--;
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
+
+
+    ListNode* mergeKLists(vector<ListNode*>& lists) {
+        if (lists.empty()) return nullptr;
+        int left, right;
+        while ((right = lists.size() - 1) != 0) {
+            left = 0;
+            while (left < right) {
+                lists[left] = mergeTwoLists(lists[left], lists[right]);
+                lists.pop_back();
+                left++;
+                right--;
+            }
+        }
+        return lists[0];
+    }
+
     void test() {
 
 
+
+
+//        {
+//            auto l1 = ListNode::parse("1->3->5");
+//            auto l2 = ListNode::parse("2->3->6");
+//            auto l3 = ListNode::parse("0->2->4");
+//            vector<ListNode*> lists{l1, l2, l3};
+//            cout << *mergeKLists(lists) << endl;
+//        }
+
+
+
+//        {
+//            cout << generateParenthesis(2) << endl;
+//        }
 
 
 //        {
