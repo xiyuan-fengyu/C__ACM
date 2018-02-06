@@ -14,6 +14,7 @@
 #include "util/util.hpp"
 #include "model/ListNode.hpp"
 #include <algorithm>
+#include <stack>
 
 using namespace std;
 using namespace xiyuan;
@@ -695,9 +696,82 @@ public:
         else return head->next;
     }
 
+
+    //https://leetcode.com/problems/valid-parentheses/description/
+    bool isValid(string s) {
+        size_t len = s.size();
+        if (len == 0) return true;
+        if (len % 2 == 1) return false;
+
+        stack<char> lefts;
+        for (size_t i = 0; i < len; ++i) {
+            char c = s[i];
+            if (c == '(' || c == '[' || c == '{') {
+                lefts.push(c);
+            }
+            else {
+                if (lefts.empty()) return false;
+                char last = lefts.top();
+                lefts.pop();
+                if (((last == '(' && c == ')'))
+                    || ((last == '[' && c == ']'))
+                    || ((last == '{' && c == '}'))) {
+
+                }
+                else return false;
+            }
+        }
+        return lefts.empty();
+    }
+
+
+
+    ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+        if (l1 == nullptr) return l2;
+        else if (l2 == nullptr) return l1;
+
+        ListNode tempHead = ListNode(0);
+        ListNode *cur = &tempHead;
+        while (true) {
+            if (l1 != nullptr && l2 != nullptr) {
+                if (l1->val <= l2->val) {
+                    cur->next = l1;
+                    l1 = l1->next;
+                }
+                else {
+                    cur->next = l2;
+                    l2 = l2->next;
+                }
+                cur = cur->next;
+            }
+            else if (l1 != nullptr) {
+                cur->next = l1;
+                break;
+            }
+            else {
+                cur->next = l2;
+                break;
+            }
+        }
+        return tempHead.next;
+    }
+
     void test() {
 
 
+
+
+//        {
+//            ListNode *l1 = ListNode::parse("1->2->4");
+//            ListNode *l2 = ListNode::parse("1->3->4->5");
+//            cout << *mergeTwoLists(l1, l2) << endl;
+//        }
+
+
+
+//        {
+//            cout << isValid("([{}])") << endl;
+//        }
 
 
 
