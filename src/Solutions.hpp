@@ -673,11 +673,44 @@ public:
         return res;
     }
 
+
+
+    ListNode* removeNthFromEnd(ListNode* head, int n) {
+        ListNode* fast = head;
+        while (n-- > 0) {
+            if (!fast) return head;
+            fast = fast->next;
+        }
+        if (fast) {
+            ListNode *slow = head;
+            while (fast) {
+                fast = fast->next;
+                if (!fast) {
+                    slow->next = slow->next->next;
+                    return head;
+                }
+                else slow = slow->next;
+            }
+        }
+        else return head->next;
+    }
+
     void test() {
 
 
 
 
+
+//        {
+//            auto head = ListNode::parse("1->2->3->4->5");
+//            int removeIndex = 2;
+//            cout << *removeNthFromEnd(head, removeIndex) << endl;
+//        }
+//        {
+//            auto head = ListNode::parse("1->2");
+//            int removeIndex = 2;
+//            cout << *removeNthFromEnd(head, removeIndex) << endl;
+//        }
 
 
 //        {

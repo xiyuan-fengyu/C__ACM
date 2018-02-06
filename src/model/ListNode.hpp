@@ -44,7 +44,7 @@ public:
         if (node.next != nullptr) {
             ListNode* cur = node.next;
             while (cur != nullptr) {
-                os << " <- " << cur->val;
+                os << " -> " << cur->val;
                 cur = cur->next;
             }
         }
