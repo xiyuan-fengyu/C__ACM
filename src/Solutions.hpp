@@ -913,9 +913,60 @@ public:
         return count;
     }
 
+
+
+    int removeElement(vector<int>& nums, int val) {
+        if (nums.empty()) return 0;
+
+        int count = 0;
+        for (int i = 0, size = int(nums.size()); i < size; ++i) {
+            if (nums[i] != val) {
+                nums[count++] = nums[i];
+            }
+        }
+        return count;
+    }
+
+
+
+    int strStr(const string &haystack, const string &needle) {
+        auto len1 = int(haystack.size());
+        auto len2 = int(needle.size());
+        if (len2 == 0) return 0;
+        if (len2 > len1) return -1;
+        for (int i = 0, j; i <= len1 - len2; ++i) {
+            j = 0;
+            for (; j < len2; ++j) {
+                if (haystack[i + j] != needle[j]) break;
+            }
+            if (j == len2) return i;
+        }
+        return -1;
+    }
+
+    int strStrKmp(const string &haystack, const string &needle) {
+        auto len1 = int(haystack.size());
+        auto len2 = int(needle.size());
+        if (len2 == 0) return 0;
+        if (len2 > len1) return -1;
+
+        return -1;
+    }
+
     void test() {
 
+        {
+            cout << strStr("hello", "ll") << endl;
+            cout << strStr("hello", "hello") << endl;
+            cout << strStr("hello", "") << endl;
+            cout << strStr("", "hello") << endl;
+        }
 
+//        {
+//            vector<int> nums{1,1,2,2,3,3,3};
+//            cout << removeElement(nums, 3) << endl;
+//            cout << nums << endl;
+//        }
 
 
 
