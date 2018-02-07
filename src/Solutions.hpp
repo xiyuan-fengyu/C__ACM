@@ -944,23 +944,225 @@ public:
         return -1;
     }
 
+
+
+    void lastMatchIndex(const string &str, vector<int> &lastMatch) {
+        lastMatch.push_back(-1);
+        int matchIndex = -1;
+        for (int compareIndex = 1, len = int(str.size()); compareIndex < len; ++compareIndex) {
+            while (matchIndex > -1 && str[matchIndex + 1] != str[compareIndex]) {
+                matchIndex = lastMatch[matchIndex];
+            }
+            if (str[matchIndex + 1] == str[compareIndex]) {
+                matchIndex++;
+            }
+            lastMatch.push_back(matchIndex);
+        }
+    }
+
     int strStrKmp(const string &haystack, const string &needle) {
         auto len1 = int(haystack.size());
         auto len2 = int(needle.size());
         if (len2 == 0) return 0;
         if (len2 > len1) return -1;
 
+        int matchIndex = -1;
+        vector<int> lastMatchs;
+        lastMatchIndex(needle, lastMatchs);
+        for (int i = 0; i < len1; ++i) {
+            while (matchIndex > -1 && needle[matchIndex + 1] != haystack[i]) {
+                matchIndex = lastMatchs[matchIndex];
+            }
+            if (needle[matchIndex + 1] == haystack[i]) {
+                matchIndex++;
+            }
+            if (matchIndex == len2 - 1) return i - len2 + 1;
+        }
         return -1;
+    }
+
+
+
+    int divide(int dividend, int divisor) {
+        if (divisor == 0 || (dividend == INT_MIN && divisor == -1)) return INT_MAX;
+        if (divisor == 1) return dividend;
+        if (dividend == -1) return -dividend;
+
+        bool sameMark = (dividend > 0 && divisor > 0) || (dividend < 0 && divisor < 0);
+        if (dividend > 0) dividend = -dividend;
+        if (divisor > 0) divisor = -divisor;
+        if (dividend > divisor) return 0;
+
+        vector<int> mutils {divisor};
+        vector<int> times {1};
+        int lastMutil;
+        int lastTime;
+        while (true) {
+            lastMutil = mutils.back();
+            if (dividend - lastMutil > lastMutil) break;
+            mutils.push_back(lastMutil + lastMutil);
+            lastTime = times.back();
+            times.push_back(lastTime + lastTime);
+        }
+        int res = times.back();
+        int sum = mutils.back();
+        for (auto i = int(mutils.size() - 2); i >= 0; ) {
+            if (dividend - sum == mutils[i]) {
+                res += times[i];
+                break;
+            }
+            else if (dividend - sum < mutils[i]) {
+                sum += mutils[i];
+                res += times[i];
+            }
+            else {
+                --i;
+            }
+        }
+        return sameMark ? res : -res;
+    }
+
+
+
+    class CharTree {
+
+        enum CharNodeType {
+            root,
+            trunk,
+            leaf
+        };
+
+        class CharNode {
+        public:
+            CharNodeType type;
+            int reachCount = 0;
+            int expectedReachCount = 0;
+            char value;
+            unordered_map<char, shared_ptr<CharNode>> children{};
+
+            CharNode(CharNodeType type, char value) : type(type), value(value) {}
+
+            shared_ptr<CharNode> addChild(CharNodeType type, char value) {
+                auto it = children.find(value);
+                if (it == children.end()) {
+                    auto temp = shared_ptr<CharNode>(new CharNode(type, value));
+                    temp->expectedReachCount = 1;
+                    children[value] = temp;
+                    return temp;
+                }
+                else {
+                    it->second->expectedReachCount++;
+                    return it->second;
+                }
+            }
+        };
+
+        int wordLen;
+
+        int wordNum = 0;
+
+        CharNode rootNode = CharNode(root, '\0');
+
+        vector<shared_ptr<CharNode>> leaves{};
+
+    public:
+
+        explicit CharTree(int wordLen) : wordLen(wordLen) {}
+
+        void resetReachCount() {
+            for (auto &leaf : leaves) {
+                leaf->reachCount = 0;
+            }
+        }
+
+        void addWord(const string &str) {
+            wordNum++;
+            CharNode *cur = &rootNode;
+            for (int i = 0, len = int(str.size()); i < len; ++i) {
+                auto child = cur->addChild(i + 1 == len ? leaf : trunk, str[i]);
+                if (child->type == leaf) leaves.push_back(child);
+                cur = child.get();
+            }
+        }
+
+        void addWords(const vector<string> &strs) {
+            for (auto &str : strs) {
+                addWord(str);
+            }
+        }
+
+        bool match(const string &str, int from) {
+            CharNode *cur;
+            for (int i = 0, checkLen = wordNum * wordLen; i < checkLen; ++i) {
+                if (i % wordLen == 0) cur = &rootNode;
+                auto it = cur->children.find(str[from + i]);
+                if (it == cur->children.cend()) {
+                    return false;
+                }
+                if (it->second->type == leaf) {
+                    if (it->second->reachCount >= it->second->expectedReachCount) return false;
+                    else it->second->reachCount++;
+                }
+                cur = it->second.get();
+            }
+            for (auto &leaf : leaves) {
+                if (leaf->reachCount != leaf->expectedReachCount) return false;
+            }
+            return true;
+        }
+
+    };
+
+    vector<int> findSubstring(const string &s, vector<string>& words) {
+        vector<int> res;
+        if (!words.empty()) {
+            auto len = int(words[0].length());
+            CharTree charTree(len);
+            charTree.addWords(words);
+            for (int i = 0, maxIndex = int(s.length() - len * words.size()); i <= maxIndex; ++i) {
+                if (charTree.match(s, i)) res.push_back(i);
+                charTree.resetReachCount();
+            }
+        }
+        return res;
     }
 
     void test() {
 
         {
-            cout << strStr("hello", "ll") << endl;
-            cout << strStr("hello", "hello") << endl;
-            cout << strStr("hello", "") << endl;
-            cout << strStr("", "hello") << endl;
+            string str {"barfoothefoobarman"};
+            vector<string> words {"foo", "bar"};
+            cout << findSubstring(str, words) << endl;
         }
+        {
+            string str {"wordgoodgoodgoodbestword"};
+            vector<string> words {"word","good","best","good"};
+            cout << findSubstring(str, words) << endl;
+        }
+
+
+
+//        {
+//            cout << divide(1, 2) << endl;
+//            cout << divide(125, 25) << endl;
+//            cout << divide(125, -25) << endl;
+//            cout << divide(-2147483648, 2) << endl;
+//            cout << divide(INT_MAX, 25) << endl;
+//            cout << divide(INT_MAX, -25) << endl;
+//            cout << divide(INT_MIN, 25) << endl;
+//            cout << divide(INT_MIN, -25) << endl;
+//        }
+
+
+
+//        {
+//            cout << strStrKmp("hello", "ll") << endl;
+//            cout << strStr("hello", "hello") << endl;
+//            cout << strStr("hello", "") << endl;
+//            cout << strStr("", "hello") << endl;
+//        }
+
+
 
 //        {
 //            vector<int> nums{1,1,2,2,3,3,3};
