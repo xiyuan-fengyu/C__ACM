@@ -1113,7 +1113,8 @@ public:
 
     };
 
-    vector<int> findSubstring(const string &s, vector<string>& words) {
+    // 134ms
+    vector<int> findSubstringV1(const string &s, vector<string>& words) {
         vector<int> res;
         if (!words.empty()) {
             auto len = int(words[0].length());
@@ -1122,6 +1123,42 @@ public:
             for (int i = 0, maxIndex = int(s.length() - len * words.size()); i <= maxIndex; ++i) {
                 if (charTree.match(s, i)) res.push_back(i);
                 charTree.resetReachCount();
+            }
+        }
+        return res;
+    }
+
+    // 111ms
+    vector<int> findSubstring(const string &s, vector<string>& words) {
+        vector<int> res;
+        if (!words.empty()) {
+            auto wordLen = int(words[0].length());
+            auto wordNum = int(words.size());
+            unordered_map<string, int> wordCount;
+            unordered_map<string, int> tempCount;
+            for (auto &word : words) {
+                wordCount[word]++;
+            }
+            for (int i = 0, maxIndex = int(s.length() - wordLen * wordNum); i <= maxIndex; ++i) {
+                int matchNum = 0;
+                for (int j = 0; j < wordNum; ++j) {
+                    auto subStr = s.substr(i + j * wordLen, wordLen);
+                    auto it = wordCount.find(subStr);
+                    if (it == wordCount.end()) {
+                        break;
+                    }
+                    else {
+                        int temp = ++(tempCount[subStr]);
+                        if (temp > it->second) {
+                            break;
+                        }
+                        else if (temp == it->second) {
+                            matchNum++;
+                        }
+                    }
+                }
+                tempCount.clear();
+                if (matchNum == wordCount.size()) res.push_back(i);
             }
         }
         return res;
