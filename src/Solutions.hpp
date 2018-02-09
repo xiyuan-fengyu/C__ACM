@@ -1279,9 +1279,67 @@ public:
         return res;
     }
 
+
+
+
+    void nextPermutation(vector<int>& nums) {
+        auto size = int(nums.size());
+        if (size > 1) {
+            int i = size - 2;
+            for (; i > -1; --i) {
+                if (nums[i] < nums[i + 1]) {
+                    for (int j = size - 1; j > i; --j) {
+                        if (nums[i] < nums[j]) {
+                            int temp = nums[i];
+                            nums[i] = nums[j];
+                            nums[j] = temp;
+                            goto afterLoops;
+                        }
+                    }
+                }
+            }
+
+            afterLoops:
+            sort(nums.begin() + i + 1, nums.end());
+        }
+    }
+
+
+
+
+    int longestValidParentheses(const string &str) {
+        auto len = int(str.length());
+        if (len <= 1) return 0;
+
+        int maxLen = 0;
+        stack<char> parentheses;
+        stack<int> validLens;
+        for (auto &c : str) {
+            if (c == ')') {
+               //TODO
+            }
+            else parentheses.push(c);
+        }
+        return maxLen;
+    }
+
     void test() {
 
+        {
+            cout << longestValidParentheses("(((()()(()))") << endl;
+            cout << longestValidParentheses("()(()") << endl;
+        }
 
+
+
+//        {
+//            vector<int> nums {1, 2, 3, 4, 5};
+//            cout << nums << endl;
+//            for (int i = 0; i < 25; ++i) {
+//                nextPermutation(nums);
+//                cout << nums << endl;
+//            }
+//        }
 
 
 //        {
