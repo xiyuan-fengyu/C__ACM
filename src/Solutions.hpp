@@ -15,6 +15,7 @@
 #include "model/ListNode.hpp"
 #include <algorithm>
 #include <stack>
+#include <random>
 
 using namespace std;
 using namespace xiyuan;
@@ -1129,7 +1130,7 @@ public:
     }
 
     // 111ms
-    vector<int> findSubstring(const string &s, vector<string>& words) {
+    vector<int> findSubstringV2(const string &s, vector<string>& words) {
         vector<int> res;
         if (!words.empty()) {
             auto wordLen = int(words[0].length());
@@ -1164,18 +1165,135 @@ public:
         return res;
     }
 
+    // 26ms
+    vector<int> findSubstringV3(const string &s, vector<string>& words) {
+        vector<int> res;
+        int sLen, wordLen, wordNum, checkWidth;
+        if ((sLen = int(s.length())) == 0
+            || (wordNum = int(words.size())) == 0
+            || (wordLen = int(words[0].length())) == 0
+            || (checkWidth = wordNum * wordLen) == 0) {
+            return res;
+        }
+
+        if (wordNum == 1) {
+            for (int i = 0, maxI = sLen - wordLen; i <= maxI; ++i) {
+                if (s.substr(i, wordLen) == words[0]) {
+                    res.push_back(i);
+                }
+            }
+            return res;
+        }
+
+        vector<int> count;
+        unordered_map<string, int> wordIndexes;
+        for (auto &item : words) {
+            auto it = wordIndexes.find(item);
+            if (it != wordIndexes.end()) {
+                count[it->second]++;
+            }
+            else {
+                count.push_back(1);
+                wordIndexes.insert(it, {item, int(wordIndexes.size())});
+            }
+        }
+
+        vector<int> sIndexes;
+        for (int i = 0, maxI = sLen - wordLen; i <= maxI; ++i) {
+            auto it = wordIndexes.find(s.substr(i, wordLen));
+            sIndexes.push_back(it != wordIndexes.end() ? it->second : -1);
+        }
+
+        vector<int> tempCount = count;
+        for (int i = 0, maxIndex = sLen - checkWidth; i <= maxIndex; ++i) {
+            int matchNum = 0;
+            for (int j = 0; j < wordNum; ++j) {
+                int matchIndex = sIndexes[i + j * wordLen];
+                if (matchIndex == -1) break;
+                auto tempC = --tempCount[matchIndex];
+                if (tempC == 0) matchNum++;
+                else if (tempC < 0) {
+                    matchNum--;
+                    break;
+                }
+            }
+            if (matchNum == count.size()) res.push_back(i);
+            tempCount = count;
+        }
+
+        return res;
+    }
+
+    // 24ms
+    vector<int> findSubstring(const string &s, vector<string>& words) {
+        vector<int> res;
+        int sLen, wordLen, wordNum, checkWidth;
+        if ((sLen = int(s.length())) == 0
+            || (wordNum = int(words.size())) == 0
+            || (wordLen = int(words[0].length())) == 0
+            || (checkWidth = wordNum * wordLen) == 0) {
+            return res;
+        }
+
+        if (wordNum == 1) {
+            for (int i = 0, maxI = sLen - wordLen; i <= maxI; ++i) {
+                if (s.substr(i, wordLen) == words[0]) {
+                    res.push_back(i);
+                }
+            }
+            return res;
+        }
+
+        default_random_engine generator;
+        uniform_int_distribution<int> distribution(1, 10000);
+        int wordHashSum = 0;
+        unordered_map<string, int> wordHash;
+        for (auto &item : words) {
+            auto it = wordHash.find(item);
+            if (it != wordHash.end()) {
+                wordHashSum += it->second;
+            }
+            else {
+                auto h = distribution(generator);
+                wordHash.insert(it, {item, h});
+                wordHashSum += h;
+            }
+        }
+
+        vector<int> sIndexes;
+        for (int i = 0, maxI = sLen - wordLen; i <= maxI; ++i) {
+            auto it = wordHash.find(s.substr(i, wordLen));
+            sIndexes.push_back(it != wordHash.end() ? it->second : -1);
+        }
+
+        for (int i = 0, maxIndex = sLen - checkWidth; i <= maxIndex; ++i) {
+            int hashSum = 0;
+            for (int j = 0; j < wordNum; ++j) {
+                int h = sIndexes[i + j * wordLen];
+                if (h == -1) break;
+                hashSum += h;
+            }
+            if (hashSum == wordHashSum) res.push_back(i);
+        }
+
+        return res;
+    }
+
     void test() {
 
-        {
-            string str {"barfoothefoobarman"};
-            vector<string> words {"foo", "bar"};
-            cout << findSubstring(str, words) << endl;
-        }
-        {
-            string str {"wordgoodgoodgoodbestword"};
-            vector<string> words {"word","good","best","good"};
-            cout << findSubstring(str, words) << endl;
-        }
+
+
+
+//        {
+//            string str {"barfoothefoobarman"};
+//            vector<string> words {"foo", "bar"};
+//            cout << findSubstring(str, words) << endl;
+//        }
+//        {
+//            string str {"wordgoodgoodgoodbestword"};
+//            vector<string> words {"word","good","best","good"};
+//            cout << findSubstring(str, words) << endl;
+//        }
 
 
 
