@@ -1306,29 +1306,144 @@ public:
 
 
 
+    //12ms
+    int longestValidParenthesesV1(const string &str) {
+        auto len = int(str.length());
+        if (len <= 1) return 0;
 
+        int maxLen = 0;
+        vector<array<int, 2>> pairs;
+        for (int i = 0; i < len; ++i) {
+            char c = str[i];
+            if (c == '(') {
+                pairs.emplace_back(array<int, 2>{i, -2});
+            }
+            else {
+                if (pairs.empty()) {
+                    pairs.emplace_back(array<int, 2>{-2, i});
+                }
+                else {
+                    bool requireMerge = false;
+                    auto &last = pairs.back();
+                    if (last[0] != -2 && last[1] == -2) {
+                        last[1] = i;
+                        requireMerge = true;
+                    }
+                    else if (pairs.size() > 1 && last[0] != -2 && last[1] != -2) {
+                        auto &beforeLast = pairs[pairs.size() - 2];
+                        if (beforeLast[0] + 1 == last[0] && beforeLast[1] == -2) {
+                            beforeLast[1] = i;
+                            pairs.pop_back();
+                            requireMerge = true;
+                        }
+                    }
+
+                    if (requireMerge) {
+                        int size;
+                        while ((size = int(pairs.size())) > 1) {
+                            auto &last1 = pairs.back();
+                            auto &beforeLast = pairs[size - 2];
+                            if (beforeLast[0] != -2 && beforeLast[1] + 1 == last1[0] && last1[1] != -2) {
+                                beforeLast[1] = last1[1];
+                                pairs.pop_back();
+                            }
+                            else break;
+                        }
+                    }
+
+                    auto &last2 = pairs.back();
+                    if (last2[0] != -2 && last2[1] != -2) {
+                        maxLen = max(maxLen, last2[1] - last2[0] + 1);
+                    }
+                }
+            }
+        }
+        return maxLen;
+    }
+
+    //12ms
+    int longestValidParenthesesV2(const string &str) {
+        auto len = int(str.length());
+        if (len <= 1) return 0;
+
+        int maxLen = 0;
+        for (int i = 0, count = 0, left = -1; i < len; ++i) {
+            if (str[i] == '(') {
+                if (count++ == 0 && left == -1) {
+                    left = i;
+                }
+            }
+            else {
+                if (--count == 0) {
+                    maxLen = max(maxLen, i - left + 1);
+                }
+                else if (count < 0) {
+                    count = 0;
+                    left = -1;
+                }
+            }
+        }
+
+        for (int i = len - 1, count = 0, right = len; i > -1; --i) {
+            if (str[i] == ')') {
+                if (count++ == 0 && right == len) {
+                    right = i;
+                }
+            }
+            else {
+                if (--count == 0) {
+                    maxLen = max(maxLen, right - i + 1);
+                }
+                else if (count < 0) {
+                    count = 0;
+                    right = len;
+                }
+            }
+        }
+        return maxLen;
+    }
+
+    //10ms
     int longestValidParentheses(const string &str) {
         auto len = int(str.length());
         if (len <= 1) return 0;
 
         int maxLen = 0;
-        stack<char> parentheses;
-        stack<int> validLens;
-        for (auto &c : str) {
-            if (c == ')') {
-               //TODO
+        int count = 0;
+        stack<int> unMatchs{};
+        for (int i = 0, left = -1; i < len; ++i) {
+            if (str[i] == '(') {
+                unMatchs.push(i);
+                if (count++ == 0 && left == -1) {
+                    left = i;
+                }
             }
-            else parentheses.push(c);
+            else {
+                if (!unMatchs.empty()) unMatchs.pop();
+
+                --count;
+                if (count == 0) {
+                    maxLen = max(maxLen, i - left + 1);
+                }
+                else if (count > 0) {
+                    maxLen = max(maxLen, i - unMatchs.top());
+                }
+                else if (count < 0) {
+                    count = 0;
+                    left = -1;
+                }
+            }
         }
         return maxLen;
     }
 
     void test() {
 
-        {
-            cout << longestValidParentheses("(((()()(()))") << endl;
-            cout << longestValidParentheses("()(()") << endl;
-        }
+//        {
+//            cout << longestValidParentheses("(((()()(()))") << endl;
+//            cout << longestValidParentheses("()((())()") << endl;
+//            cout << longestValidParentheses(")(((((()())()()))()(()))(") << endl;
+//        }
 
 
 
