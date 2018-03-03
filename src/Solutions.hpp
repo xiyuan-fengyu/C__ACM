@@ -1449,6 +1449,8 @@ public:
 
         int mid = (left + right) / 2;
         int midV = nums[mid];
+        int leftV = nums[left];
+        int rightV = nums[right];
 
     }
 
