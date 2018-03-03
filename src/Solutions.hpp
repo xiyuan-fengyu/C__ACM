@@ -1444,6 +1444,13 @@ public:
 
     }
 
+    int searchBetween(const vector<int> &nums, int target, int left, int right) {
+        if (left > right) return -1;
+
+        int mid = (left + right) / 2;
+        int midV = nums[mid];
+
+    }
 
     void test() {
 
