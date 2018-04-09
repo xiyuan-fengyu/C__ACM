@@ -1441,17 +1441,26 @@ public:
 
 
     int search(vector<int>& nums, int target) {
+        if (nums.empty()) return -1;
+        int left = 0;
+        int right = int(nums.size() - 1);
+        int mid, midV, leftV, rightV;
+        while (left < right) {
+            leftV = nums[left];
+            rightV = nums[right];
+            midV = nums[mid = (left + right) / 2];
+            if (midV <= rightV) {
+                if (midV < target && target <= rightV) left = mid + 1;
+                else right = mid;
+            }
+            else {
+                if (midV >= target && target >= leftV) right = mid;
+                else left = mid + 1;
+            }
+        }
 
-    }
-
-    int searchBetween(const vector<int> &nums, int target, int left, int right) {
-        if (left > right) return -1;
-
-        int mid = (left + right) / 2;
-        int midV = nums[mid];
-        int leftV = nums[left];
-        int rightV = nums[right];
-
+        if (nums[left] == target) return left;
+        return -1;
     }
 
     void test() {
@@ -1459,7 +1468,9 @@ public:
         {
             {
                 vector<int> nums{4, 5, 6, 7, 0, 1, 2};
-                cout << search(nums, 2) << endl;
+                for (int i = 0; i < nums.size(); ++i) {
+                    cout << search(nums, nums[i]) << endl;
+                }
             }
         }
 
