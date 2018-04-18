@@ -1463,16 +1463,82 @@ public:
         return -1;
     }
 
+
+
+    vector<int> searchRange(vector<int>& nums, int target) {
+        if (nums.empty() || target < nums[0] || target > nums.back()) {
+            return vector<int> {-1 , -1};
+        }
+
+        return searchRange(nums, target, 0, nums.size() - 1);
+    }
+
+    vector<int> searchRange(vector<int>& nums, int target, int left, int right) {
+        if (left > right) return vector<int> {-1 , -1};
+        int mid = (left + right) / 2;
+        int midV = nums[mid];
+        if (target < midV) {
+            return searchRange(nums, target, left, mid - 1);
+        }
+        else if (target > midV) {
+            return searchRange(nums, target, mid + 1, right);
+        }
+        else {
+            return vector<int> {
+                searchLeftEdge(nums, target, left, mid),
+                searchRightEdge(nums, target, mid, right)
+            };
+        }
+    }
+
+    int searchLeftEdge(vector<int>& nums, int target, int left, int right) {
+        if (left > right) return -1;
+
+        int mid = (left + right) / 2;
+        int midV = nums[mid];
+        if (target > midV) {
+            return searchLeftEdge(nums, target, mid + 1, right);
+        }
+        else if (target == midV) {
+            int leftSub = searchLeftEdge(nums, target, left, mid - 1);
+            return leftSub == -1 ? mid : leftSub;
+        }
+        else return -1;
+    }
+
+    int searchRightEdge(vector<int>& nums, int target, int left, int right) {
+        if (left > right) return -1;
+
+        int mid = (left + right) / 2;
+        int midV = nums[mid];
+        if (target < midV) {
+            return searchRightEdge(nums, target, left, mid - 1);
+        }
+        else if (target == midV) {
+            int rightSub = searchRightEdge(nums, target, mid + 1, right);
+            return rightSub == -1 ? mid : rightSub;
+        }
+        else return -1;
+    }
+
+
     void test() {
 
-        {
-            {
-                vector<int> nums{4, 5, 6, 7, 0, 1, 2};
-                for (int i = 0; i < nums.size(); ++i) {
-                    cout << search(nums, nums[i]) << endl;
-                }
-            }
-        }
+//        {
+//            vector<int> nums {5,7,7,8,8,10};
+//            int target = 8;
+//            cout << searchRange(nums, target) << endl;
+//        }
+
+
+//        {
+//            {
+//                vector<int> nums{4, 5, 6, 7, 0, 1, 2};
+//                for (int i = 0; i < nums.size(); ++i) {
+//                    cout << search(nums, nums[i]) << endl;
+//                }
+//            }
+//        }
 
 
 //        {
