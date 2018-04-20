@@ -1522,7 +1522,36 @@ public:
     }
 
 
+    int searchInsert(vector<int>& nums, int target) {
+        if (nums.empty() || target <= nums.front()) return 0;
+
+        auto back = nums.back();
+        auto size = int(nums.size());
+        if (target == back) return size - 1;
+        else if (target > back) return size;
+
+        int left = 1;
+        int right = size - 2;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            int midV = nums[mid];
+            if (midV == target) return mid;
+            else if (midV < target) left = mid + 1;
+            else right = mid - 1;
+        }
+        return right + 1;
+    }
+
     void test() {
+
+
+
+//        {
+//            vector<int> nums {1,3,5,7};
+//            int target = 6;
+//            cout << searchInsert(nums, target) << endl;
+//        }
+
 
 //        {
 //            vector<int> nums {5,7,7,8,8,10};
