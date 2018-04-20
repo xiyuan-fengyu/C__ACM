@@ -1542,8 +1542,100 @@ public:
         return right + 1;
     }
 
+
+
+    void buildSudokuVector(vector<vector<char>> &board, const string &chars) {
+        board.clear();
+        int index = 0;
+        vector<char> line;
+        for (char c : chars) {
+            if (c == '.' || (c >= '1' && c <= '9')) {
+                if (index != 0 && index % 9 == 0) {
+                    board.push_back(line);
+                    line = vector<char>();
+                }
+                line.push_back(c);
+                index++;
+            }
+        }
+        board.push_back(line);
+    }
+
+    bool isValidSudoku(vector<vector<char>>& board) {
+        for (int i = 0; i < 9; ++i) {
+            int check = 0;
+
+            // 检查行
+            for (int j = 0; j < 9; ++j) {
+                auto c = board[i][j];
+                if (c != '.') {
+                    int bit = 1 << int(c - '1');
+                    if (check & bit) return false;
+                    check |= bit;
+                }
+            }
+
+            // 检查列
+            check = 0;
+            for (int j = 0; j < 9; ++j) {
+                auto c = board[j][i];
+                if (c != '.') {
+                    int bit = 1 << int(c - '1');
+                    if (check & bit) return false;
+                    check |= bit;
+                }
+            }
+
+            // 检查9格
+            check = 0;
+            for (int j = 0; j < 9; ++j) {
+                auto index = i / 3 * 27 + i % 3 * 3 + j / 3 * 9 + j % 3;
+                auto c = board[index / 9][index % 9];
+                if (c != '.') {
+                    int bit = 1 << int(c - '1');
+                    if (check & bit) return false;
+                    check |= bit;
+                }
+            }
+        }
+        return true;
+    }
+
+
     void test() {
 
+//        {
+//            vector<vector<char>> board {};
+//            buildSudokuVector(board, R"_(
+//[
+//  ["5","3",".",".","7",".",".",".","."],
+//  ["6",".",".","1","9","5",".",".","."],
+//  [".","9","8",".",".",".",".","6","."],
+//  ["8",".",".",".","6",".",".",".","3"],
+//  ["4",".",".","8",".","3",".",".","1"],
+//  ["7",".",".",".","2",".",".",".","6"],
+//  [".","6",".",".",".",".","2","8","."],
+//  [".",".",".","4","1","9",".",".","5"],
+//  [".",".",".",".","8",".",".","7","9"]
+//]
+//)_");
+//            cout << isValidSudoku(board) << endl;
+//
+//            buildSudokuVector(board, R"_(
+//[
+//[".",".",".",".","5",".",".","1","."],
+//[".","4",".","3",".",".",".",".","."],
+//[".",".",".",".",".","3",".",".","1"],
+//["8",".",".",".",".",".",".","2","."],
+//[".",".","2",".","7",".",".",".","."],
+//[".","1","5",".",".",".",".",".","."],
+//[".",".",".",".",".","2",".",".","."],
+//[".","2",".","9",".",".",".",".","."],
+//[".",".","4",".",".",".",".",".","."]
+//]
+//)_");
+//            cout << isValidSudoku(board) << endl;
+//        }
 
 
 //        {
@@ -1564,7 +1656,7 @@ public:
 //            {
 //                vector<int> nums{4, 5, 6, 7, 0, 1, 2};
 //                for (int i = 0; i < nums.size(); ++i) {
-//                    cout << search(nums, nums[i]) << endl;
+//                    cout << search(nums, nums[i}) << endl;
 //                }
 //            }
 //        }
