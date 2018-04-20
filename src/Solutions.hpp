@@ -1562,10 +1562,10 @@ public:
     }
 
     bool isValidSudoku(vector<vector<char>>& board) {
+        int check = 0;
         for (int i = 0; i < 9; ++i) {
-            int check = 0;
-
             // 检查行
+            check = 0;
             for (int j = 0; j < 9; ++j) {
                 auto c = board[i][j];
                 if (c != '.') {
