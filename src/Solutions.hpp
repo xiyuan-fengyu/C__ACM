@@ -1602,7 +1602,81 @@ public:
     }
 
 
+    void solveSudoku(vector<vector<char>>& board) {
+        array<array<int, 2>, 81> validNums {};
+        for (int i = 0; i < 81; ++i) {
+            reduceValid(board, i, validNums);
+        }
+
+        solveSudoku(board, validNums);
+    }
+
+    bool reduceValid(vector<vector<char>>& board, int i, array<array<int, 2>, 81> &validNums) {
+        int row = i / 9;
+        int col = i % 9;
+        char c = board[row][col];
+        if (c != '.') {
+            int cInt = c - '0';
+            int cBit = 1 << (cInt - 1);
+
+            // 行
+            for (int j = 0; j < 9; ++j) {
+                if (j != col && board[row][j] == '.') {
+                    int index = row * 9 + j;
+                    if ((validNums[index][0] & cBit) == 0) {
+                        validNums[index][0] |= cBit;
+                        validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
+                    }
+                }
+            }
+
+            // 列
+            for (int j = 0; j < 9; ++j) {
+                if (j != row && board[j][col] == '.') {
+                    int index = j * 9 + col;
+                    if ((validNums[index][0] & cBit) == 0) {
+                        validNums[index][0] |= cBit;
+                        validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
+                    }
+                }
+            }
+
+            // 九宫
+            int ltIndex = i / 27 * 27 + i % 9 / 3 * 3;
+            for (int j = 0; j < 9; ++j) {
+                auto index = ltIndex + j / 3 * 9 + j % 3;
+                if ((validNums[index][0] & cBit) == 0) {
+                    validNums[index][0] |= cBit;
+                    validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
+                }
+            }
+        }
+    }
+
+    void solveSudoku(vector<vector<char>>& board, array<array<int, 2>, 81> &validNums) {
+
+    }
+
     void test() {
+
+        {
+            vector<vector<char>> board{};
+            buildSudokuVector(board, R"_(
+[
+  ["5","3",".",".","7",".",".",".","."],
+  ["6",".",".","1","9","5",".",".","."],
+  [".","9","8",".",".",".",".","6","."],
+  ["8",".",".",".","6",".",".",".","3"],
+  ["4",".",".","8",".","3",".",".","1"],
+  ["7",".",".",".","2",".",".",".","6"],
+  [".","6",".",".",".",".","2","8","."],
+  [".",".",".","4","1","9",".",".","5"],
+  [".",".",".",".","8",".",".","7","9"]
+]
+)_");
+            solveSudoku(board);
+        }
+
 
 //        {
 //            vector<vector<char>> board {};
