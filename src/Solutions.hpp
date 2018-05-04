@@ -1605,51 +1605,63 @@ public:
     void solveSudoku(vector<vector<char>>& board) {
         array<array<int, 2>, 81> validNums {};
         for (int i = 0; i < 81; ++i) {
-            reduceValid(board, i, validNums);
+            int row = i / 9;
+            int col = i % 9;
+            char c = board[row][col];
+            if (c != '.') {
+                validNums[i][0] = 511;
+                validNums[i][1] = 9;
+            }
+        }
+
+        for (int i = 0; i < 81; ++i) {
+            int row = i / 9;
+            int col = i % 9;
+            char c = board[row][col];
+            if (c != '.') {
+
+            }
         }
 
         solveSudoku(board, validNums);
     }
 
-    bool reduceValid(vector<vector<char>>& board, int i, array<array<int, 2>, 81> &validNums) {
-        int row = i / 9;
-        int col = i % 9;
-        char c = board[row][col];
-        if (c != '.') {
-            int cInt = c - '0';
-            int cBit = 1 << (cInt - 1);
+    bool reduceValid(int cInt, int row, int col, array<array<int, 2>, 81> &validNums) {
+        int cBit = 1 << (cInt - 1);
 
-            // 行
-            for (int j = 0; j < 9; ++j) {
-                if (j != col && board[row][j] == '.') {
-                    int index = row * 9 + j;
-                    if ((validNums[index][0] & cBit) == 0) {
-                        validNums[index][0] |= cBit;
-                        validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
-                    }
-                }
-            }
+        // 行
+        for (int j = 0; j < 9; ++j) {
+//            if (j != col) {
+//                int index = row * 9 + j;
+//                if (validNums[index])
+//
+//                if ((validNums[index][0] & cBit) == 0) {
+//                    validNums[index][0] |= cBit;
+//                    validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
+//                }
+//            }
+        }
 
-            // 列
-            for (int j = 0; j < 9; ++j) {
-                if (j != row && board[j][col] == '.') {
-                    int index = j * 9 + col;
-                    if ((validNums[index][0] & cBit) == 0) {
-                        validNums[index][0] |= cBit;
-                        validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
-                    }
-                }
-            }
+        // 列
+        for (int j = 0; j < 9; ++j) {
+//            if (j != row && board[j][col] == '.') {
+//                int index = j * 9 + col;
+//                if ((validNums[index][0] & cBit) == 0) {
+//                    validNums[index][0] |= cBit;
+//                    validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
+//                }
+//            }
+        }
 
-            // 九宫
-            int ltIndex = i / 27 * 27 + i % 9 / 3 * 3;
-            for (int j = 0; j < 9; ++j) {
-                auto index = ltIndex + j / 3 * 9 + j % 3;
-                if ((validNums[index][0] & cBit) == 0) {
-                    validNums[index][0] |= cBit;
-                    validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
-                }
-            }
+        // 九宫
+        int i = row * 9 + col;
+        int ltIndex = i / 27 * 27 + i % 9 / 3 * 3;
+        for (int j = 0; j < 9; ++j) {
+            auto index = ltIndex + j / 3 * 9 + j % 3;
+//            if ((validNums[index][0] & cBit) == 0) {
+//                validNums[index][0] |= cBit;
+//                validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
+//            }
         }
     }
 
@@ -1674,7 +1686,8 @@ public:
   [".",".",".",".","8",".",".","7","9"]
 ]
 )_");
-            solveSudoku(board);
+//            solveSudoku(board);
+            cout << ((1 << 9) - 1) << endl;
         }
 
 
