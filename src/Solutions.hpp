@@ -1603,27 +1603,95 @@ public:
 
 
     void solveSudoku(vector<vector<char>>& board) {
-        array<array<int, 2>, 81> validNums {};
+        array<array<int, 3>, 81> validNums {};
         for (int i = 0; i < 81; ++i) {
             int row = i / 9;
             int col = i % 9;
             char c = board[row][col];
-            if (c != '.') {
+            if (c == '.') {
                 validNums[i][0] = 511;
                 validNums[i][1] = 9;
+                validNums[i][2] = 0;
+            }
+            else {
+                validNums[i][0] = 0;
+                validNums[i][1] = 0;
+                validNums[i][2] = int(c);
             }
         }
 
+        int minRemainPos;
         for (int i = 0; i < 81; ++i) {
-            int row = i / 9;
-            int col = i % 9;
-            char c = board[row][col];
-            if (c != '.') {
-
+            if (validNums[i][2] != 0) {
+                if (i == 80) {
+                    minRemainPos = reduceValidNum(i / 9, i % 9, validNums, nullptr, true);
+                }
+                else {
+                    reduceValidNum(i / 9, i % 9, validNums, nullptr, false);
+                }
             }
         }
 
-        solveSudoku(board, validNums);
+        // todo
+    }
+
+    int reduceValidNum(int row, int col, array<array<int, 3>, 81> &validNums, vector<array<int, 2>> *changes, bool requireMinPos) {
+        int curPos = row * 9 + col;
+        int num = validNums[curPos][2];
+        int numBit = 1 << (num - 1);
+
+        // 减少当前行的剩余可用数字信息
+        for (int i = 0; i < 9; ++i) {
+            if (i != col) {
+                int pos = row * 9 + i;
+                reduceValidNum(numBit, pos, validNums[pos], changes);
+            }
+        }
+
+        // 减少当前列的剩余可用数字信息
+        for (int i = 0; i < 9; ++i) {
+            if (i != row) {
+                int pos = i * 9 + col;
+                reduceValidNum(numBit, pos, validNums[pos], changes);
+            }
+        }
+
+        // 减少九宫格的剩余可用数字信息
+        int ltIndex = curPos / 27 * 27 + curPos % 9 / 3 * 3;
+        for (int j = 0; j < 9; ++j) {
+            auto pos = ltIndex + j / 3 * 9 + j % 3;
+            reduceValidNum(numBit, pos, validNums[pos], changes);
+        }
+
+        if (!requireMinPos) return -1;
+
+        int minRemain = -1;
+        int minRemainPos = 81;
+        for (int i = 0; i < 81; ++i) {
+            auto validNum = validNums[i];
+            if (validNum[1] == 0) {
+                if (validNum[2] == 0) return -1;
+            }
+            else {
+                if (minRemain == -1 || minRemain < validNum[1]) {
+                    minRemain = validNum[1];
+                    minRemainPos = i;
+                }
+            }
+        }
+        return minRemainPos;
+    }
+
+    void reduceValidNum(int numBit, int pos, array<int, 3> &validNum, vector<array<int, 2>> *changes) {
+        if (validNum[2] == 0) {
+            if ((validNum[0] & numBit) != 0) {
+                validNum[0] -= numBit;
+                validNum[1] -= 1;
+                if (changes != nullptr) {
+                    changes->push_back(array<int, 2>{pos, numBit});
+                }
+            }
+        }
     }
 
     bool reduceValid(int cInt, int row, int col, array<array<int, 2>, 81> &validNums) {
@@ -1687,7 +1755,6 @@ public:
 ]
 )_");
 //            solveSudoku(board);
-            cout << ((1 << 9) - 1) << endl;
         }
 
 
