@@ -1616,26 +1616,53 @@ public:
             else {
                 validNums[i][0] = 0;
                 validNums[i][1] = 0;
-                validNums[i][2] = int(c);
+                validNums[i][2] = c - '0';
             }
         }
 
-        int minRemainPos;
         for (int i = 0; i < 81; ++i) {
             if (validNums[i][2] != 0) {
-                if (i == 80) {
-                    minRemainPos = reduceValidNum(i / 9, i % 9, validNums, nullptr, true);
-                }
-                else {
-                    reduceValidNum(i / 9, i % 9, validNums, nullptr, false);
-                }
+                reduceValidNum(i / 9, i % 9, validNums, nullptr);
             }
         }
 
-        // todo
+        int minRemainPos = getRemainMinPos(validNums);
+        tryValidNum(minRemainPos, validNums);
+
+        for (int i = 0; i < 81; ++i) {
+            int row = i / 9;
+            int col = i % 9;
+            board[row][col] = char(validNums[i][2] + '0');
+        }
     }
 
-    int reduceValidNum(int row, int col, array<array<int, 3>, 81> &validNums, vector<array<int, 2>> *changes, bool requireMinPos) {
+    bool tryValidNum(int pos, array<array<int, 3>, 81> &validNums) {
+        auto& validNum = validNums[pos];
+        int validNumBit = validNum[0];
+        int num = 1;
+        while (validNumBit > 0) {
+            if ((validNumBit & 1) > 0) {
+                vector<array<int, 2>> changes {};
+                validNum[2] = num;
+                reduceValidNum(pos / 9, pos % 9, validNums, &changes);
+
+                int minRemainPos = getRemainMinPos(validNums);
+                if (minRemainPos == 81) return true;
+                else if (minRemainPos > -1) {
+                    bool subRes = tryValidNum(minRemainPos, validNums);
+                    if (subRes) return true;
+                }
+
+                rollbackValidNums(validNums, &changes);
+            }
+            num++;
+            validNumBit >>= 1;
+        }
+        validNum[2] = 0;
+        return false;
+    }
+
+    void reduceValidNum(int row, int col, array<array<int, 3>, 81> &validNums, vector<array<int, 2>> *changes) {
         int curPos = row * 9 + col;
         int num = validNums[curPos][2];
         int numBit = 1 << (num - 1);
@@ -1662,24 +1689,6 @@ public:
             auto pos = ltIndex + j / 3 * 9 + j % 3;
             reduceValidNum(numBit, pos, validNums[pos], changes);
         }
-
-        if (!requireMinPos) return -1;
-
-        int minRemain = -1;
-        int minRemainPos = 81;
-        for (int i = 0; i < 81; ++i) {
-            auto validNum = validNums[i];
-            if (validNum[1] == 0) {
-                if (validNum[2] == 0) return -1;
-            }
-            else {
-                if (minRemain == -1 || minRemain < validNum[1]) {
-                    minRemain = validNum[1];
-                    minRemainPos = i;
-                }
-            }
-        }
-        return minRemainPos;
     }
 
     void reduceValidNum(int numBit, int pos, array<int, 3> &validNum, vector<array<int, 2>> *changes) {
@@ -1694,47 +1703,30 @@ public:
         }
     }
 
-    bool reduceValid(int cInt, int row, int col, array<array<int, 2>, 81> &validNums) {
-        int cBit = 1 << (cInt - 1);
-
-        // 行
-        for (int j = 0; j < 9; ++j) {
-//            if (j != col) {
-//                int index = row * 9 + j;
-//                if (validNums[index])
-//
-//                if ((validNums[index][0] & cBit) == 0) {
-//                    validNums[index][0] |= cBit;
-//                    validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
-//                }
-//            }
+    int getRemainMinPos(array<array<int, 3>, 81> &validNums) {
+        int minRemain = -1;
+        int minRemainPos = 81;
+        for (int i = 0; i < 81; ++i) {
+            auto validNum = validNums[i];
+            if (validNum[1] == 0) {
+                if (validNum[2] == 0) return -1;
+            }
+            else if (validNum[2] == 0) {
+                if (minRemain == -1 || minRemain > validNum[1]) {
+                    minRemain = validNum[1];
+                    minRemainPos = i;
+                }
+            }
         }
-
-        // 列
-        for (int j = 0; j < 9; ++j) {
-//            if (j != row && board[j][col] == '.') {
-//                int index = j * 9 + col;
-//                if ((validNums[index][0] & cBit) == 0) {
-//                    validNums[index][0] |= cBit;
-//                    validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
-//                }
-//            }
-        }
-
-        // 九宫
-        int i = row * 9 + col;
-        int ltIndex = i / 27 * 27 + i % 9 / 3 * 3;
-        for (int j = 0; j < 9; ++j) {
-            auto index = ltIndex + j / 3 * 9 + j % 3;
-//            if ((validNums[index][0] & cBit) == 0) {
-//                validNums[index][0] |= cBit;
-//                validNums[index][1] = (validNums[index][1] + 9 - 1) % 9;
-//            }
-        }
+        return minRemainPos;
     }
 
-    void solveSudoku(vector<vector<char>>& board, array<array<int, 2>, 81> &validNums) {
-
+    void rollbackValidNums(array<array<int, 3>, 81> &validNums, vector<array<int, 2>> *changes) {
+        for (auto change : *changes) {
+            auto& validNum = validNums[change[0]];
+            validNum[0] |= change[1];
+            validNum[1]++;
+        }
     }
 
     void test() {
@@ -1754,7 +1746,14 @@ public:
   [".",".",".",".","8",".",".","7","9"]
 ]
 )_");
-//            solveSudoku(board);
+            solveSudoku(board);
+            for (auto &item : board) {
+                for (auto c : item) {
+                    cout << c << "  ";
+                }
+                cout << '\n';
+            }
+            cout << endl;
         }
 
 
