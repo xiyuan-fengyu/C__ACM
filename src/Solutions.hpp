@@ -1757,7 +1757,68 @@ public:
     }
 
 
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> res {};
+        sort(candidates.begin(), candidates.end());
+        combinationSum(res, candidates, 0, target);
+        return res;
+    }
+
+    void combinationSum(vector<vector<int>> &res, vector<int>& candidates, int index, int target) {
+        if (index >= candidates.size() || candidates[index] > target) {
+            return;
+        }
+
+        auto curValue = candidates[index];
+        if (curValue == target) {
+            res.push_back(vector<int> {target});
+        }
+        else {
+            int size = res.size();
+
+            combinationSum(res, candidates, index, target - curValue);
+            int newSize0 = res.size();
+            if (newSize0 > size) {
+                for (int i = size; i < newSize0; ++i) {
+                    auto& resItem = res[i];
+                    resItem.insert(resItem.begin(), curValue);
+                }
+            }
+
+            combinationSum(res, candidates, index + 1, target - curValue);
+            int newSize1 = res.size();
+            if (newSize1 > newSize0) {
+                for (int i = newSize0; i < newSize1; ++i) {
+                    auto& resItem = res[i];
+                    resItem.insert(resItem.begin(), curValue);
+                }
+            }
+
+            combinationSum(res, candidates, index + 1, target);
+            int newSize2 = res.size();
+            if (newSize2 > newSize1) {
+                for (int i = newSize1; i < newSize2; ++i) {
+                    auto& resItem = res[i];
+                    resItem.insert(resItem.begin(), curValue);
+                }
+            }
+        }
+    }
+
+
     void test() {
+
+        {
+            vector<int> candidates {2, 3, 6, 7};
+            auto res = combinationSum(candidates, 7);
+            for (auto item : res) {
+                for (auto num : item) {
+                    cout << num << " ";
+                }
+                cout << "\n";
+            }
+            cout << endl;
+        }
 
 //        {
 //            for (int i = 1; i <= 10; ++i) {
