@@ -1756,26 +1756,48 @@ public:
         return str;
     }
 
-
+    // TODO 待优化
     vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
         vector<vector<int>> res {};
+//        unordered_map<int, vector<tuple<int, vector<vector<int>>*>>> targetCaches {};
         sort(candidates.begin(), candidates.end());
         combinationSum(res, candidates, 0, target);
         return res;
     }
 
-    void combinationSum(vector<vector<int>> &res, vector<int>& candidates, int index, int target) {
+    void combinationSum(vector<vector<int>> &res, vector<int>& candidates, int index, int target) {//, unordered_map<int, vector<tuple<int, vector<vector<int>>*>>>& targetCaches
         if (index >= candidates.size() || candidates[index] > target) {
             return;
         }
 
+//        int invalidIndexMin = candidates.size();
+//        auto targetCacheF = targetCaches.find(target);
+//        if (targetCacheF != targetCaches.end()) {
+//            auto targetCacheV = targetCacheF->second;
+//            for (auto targetCache : targetCacheV) {
+//                auto cacheIndex = get<0>(targetCache);
+//                auto cacheRes = get<1>(targetCache);
+//                if (cacheRes == nullptr) {
+//                    if (index >= cacheIndex) {
+//                        return;
+//                    }
+//                    invalidIndexMin = min(cacheIndex, invalidIndexMin);
+//                }
+//                else if (cacheIndex == index) {
+//                    for (auto item : *cacheRes) {
+//                        res.push_back(item);
+//                    }
+//                    return;
+//                }
+//            }
+//        }
+
+        int size = res.size();
         auto curValue = candidates[index];
         if (curValue == target) {
             res.push_back(vector<int> {target});
         }
         else {
-            int size = res.size();
-
             combinationSum(res, candidates, index, target - curValue);
             int newSize0 = res.size();
             if (newSize0 > size) {
@@ -1785,40 +1807,73 @@ public:
                 }
             }
 
-            combinationSum(res, candidates, index + 1, target - curValue);
-            int newSize1 = res.size();
-            if (newSize1 > newSize0) {
-                for (int i = newSize0; i < newSize1; ++i) {
-                    auto& resItem = res[i];
-                    resItem.insert(resItem.begin(), curValue);
-                }
-            }
-
             combinationSum(res, candidates, index + 1, target);
-            int newSize2 = res.size();
-            if (newSize2 > newSize1) {
-                for (int i = newSize1; i < newSize2; ++i) {
-                    auto& resItem = res[i];
-                    resItem.insert(resItem.begin(), curValue);
-                }
-            }
         }
+
+//        if (size == res.size()) {
+//            if (index < invalidIndexMin) {
+//                if (targetCacheF != targetCaches.end()) {
+//                    auto& v = targetCacheF->second;
+//                    v.push_back({index, nullptr});
+//                    sort(v.begin(), v.end(), [&](tuple<int, vector<vector<int>>*> o1, tuple<int, vector<vector<int>>*> o2) -> int {
+//                        return get<0>(o1) - get<0>(o2);
+//                    });
+//                }
+//                else {
+//                    targetCaches[target] = {
+//                            {index, nullptr}
+//                    };
+//                }
+//            }
+//        }
+//        else {
+//            vector<vector<int>> cacheRes {};
+//            for (int i = size, newSize = res.size(); i < newSize; ++i) {
+//                cacheRes.push_back(res[i]);
+//            }
+//            if (targetCacheF != targetCaches.end()) {
+//                auto& v = targetCacheF->second;
+//                v.push_back({index, &cacheRes});
+//                sort(v.begin(), v.end(), [&](tuple<int, vector<vector<int>>*> o1, tuple<int, vector<vector<int>>*> o2) -> int {
+//                    return get<0>(o1) - get<0>(o2);
+//                });
+//            }
+//            else {
+//                targetCaches[target] = {
+//                        {index, &cacheRes}
+//                };
+//            }
+//        }
     }
 
 
     void test() {
 
         {
-            vector<int> candidates {2, 3, 6, 7};
-            auto res = combinationSum(candidates, 7);
-            for (auto item : res) {
-                for (auto num : item) {
-                    cout << num << " ";
+            {
+                vector<int> candidates {2, 3, 6, 7};
+                auto res = combinationSum(candidates, 7);
+                for (auto item : res) {
+                    for (auto num : item) {
+                        cout << num << " ";
+                    }
+                    cout << "\n";
                 }
-                cout << "\n";
+                cout << endl;
             }
-            cout << endl;
+            {
+                vector<int> candidates {7,3,2};
+                auto res = combinationSum(candidates, 18);
+                for (auto item : res) {
+                    for (auto num : item) {
+                        cout << num << " ";
+                    }
+                    cout << "\n";
+                }
+                cout << endl;
+            }
         }
+
 
 //        {
 //            for (int i = 1; i <= 10; ++i) {
