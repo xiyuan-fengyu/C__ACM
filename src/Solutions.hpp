@@ -1830,6 +1830,10 @@ public:
     }
 
 
+    int firstMissingPositive(vector<int>& nums) {
+
+    }
+
     void test() {
 
 //        {
