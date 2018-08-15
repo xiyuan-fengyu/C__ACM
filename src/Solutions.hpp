@@ -1759,7 +1759,6 @@ public:
     // TODO 待优化
     vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
         vector<vector<int>> res {};
-//        unordered_map<int, vector<tuple<int, vector<vector<int>>*>>> targetCaches {};
         sort(candidates.begin(), candidates.end());
         combinationSum(res, candidates, 0, target);
         return res;
@@ -1769,28 +1768,6 @@ public:
         if (index >= candidates.size() || candidates[index] > target) {
             return;
         }
-
-//        int invalidIndexMin = candidates.size();
-//        auto targetCacheF = targetCaches.find(target);
-//        if (targetCacheF != targetCaches.end()) {
-//            auto targetCacheV = targetCacheF->second;
-//            for (auto targetCache : targetCacheV) {
-//                auto cacheIndex = get<0>(targetCache);
-//                auto cacheRes = get<1>(targetCache);
-//                if (cacheRes == nullptr) {
-//                    if (index >= cacheIndex) {
-//                        return;
-//                    }
-//                    invalidIndexMin = min(cacheIndex, invalidIndexMin);
-//                }
-//                else if (cacheIndex == index) {
-//                    for (auto item : *cacheRes) {
-//                        res.push_back(item);
-//                    }
-//                    return;
-//                }
-//            }
-//        }
 
         int size = res.size();
         auto curValue = candidates[index];
@@ -1809,70 +1786,92 @@ public:
 
             combinationSum(res, candidates, index + 1, target);
         }
+    }
 
-//        if (size == res.size()) {
-//            if (index < invalidIndexMin) {
-//                if (targetCacheF != targetCaches.end()) {
-//                    auto& v = targetCacheF->second;
-//                    v.push_back({index, nullptr});
-//                    sort(v.begin(), v.end(), [&](tuple<int, vector<vector<int>>*> o1, tuple<int, vector<vector<int>>*> o2) -> int {
-//                        return get<0>(o1) - get<0>(o2);
-//                    });
-//                }
-//                else {
-//                    targetCaches[target] = {
-//                            {index, nullptr}
-//                    };
-//                }
-//            }
-//        }
-//        else {
-//            vector<vector<int>> cacheRes {};
-//            for (int i = size, newSize = res.size(); i < newSize; ++i) {
-//                cacheRes.push_back(res[i]);
-//            }
-//            if (targetCacheF != targetCaches.end()) {
-//                auto& v = targetCacheF->second;
-//                v.push_back({index, &cacheRes});
-//                sort(v.begin(), v.end(), [&](tuple<int, vector<vector<int>>*> o1, tuple<int, vector<vector<int>>*> o2) -> int {
-//                    return get<0>(o1) - get<0>(o2);
-//                });
-//            }
-//            else {
-//                targetCaches[target] = {
-//                        {index, &cacheRes}
-//                };
-//            }
-//        }
+
+    // TODO 待优化
+    vector<vector<int>> combinationSum2(vector<int>& candidates, int target) {
+        vector<vector<int>> res {};
+        sort(candidates.begin(), candidates.end());
+        combinationSum2(res, candidates, 0, target);
+        return res;
+    }
+
+    void combinationSum2(vector<vector<int>> &res, vector<int>& candidates, int index, int target) {
+        int numSize = candidates.size();
+        if (index >= numSize || candidates[index] > target) {
+            return;
+        }
+
+        auto curValue = candidates[index];
+        if (curValue == target) {
+            res.push_back(vector<int> {target});
+        }
+        else {
+            int resSize = res.size();
+            combinationSum2(res, candidates, index + 1, target - curValue);
+            int resSize0 = res.size();
+            if (resSize0 > resSize) {
+                for (int i = resSize; i < resSize0; ++i) {
+                    auto& resItem = res[i];
+                    resItem.insert(resItem.begin(), curValue);
+                }
+            }
+
+            int nextIndex = index + 1;
+            while (nextIndex < numSize) {
+                if (candidates[nextIndex] != candidates[index]) {
+                    combinationSum2(res, candidates, nextIndex, target);
+                    break;
+                }
+                nextIndex++;
+            }
+        }
     }
 
 
     void test() {
 
-        {
-            {
-                vector<int> candidates {2, 3, 6, 7};
-                auto res = combinationSum(candidates, 7);
-                for (auto item : res) {
-                    for (auto num : item) {
-                        cout << num << " ";
-                    }
-                    cout << "\n";
-                }
-                cout << endl;
-            }
-            {
-                vector<int> candidates {7,3,2};
-                auto res = combinationSum(candidates, 18);
-                for (auto item : res) {
-                    for (auto num : item) {
-                        cout << num << " ";
-                    }
-                    cout << "\n";
-                }
-                cout << endl;
-            }
-        }
+//        {
+//            {
+//                vector<int> candidates {10,1,2,7,6,1,5};
+//                auto res = combinationSum2(candidates, 8);
+//                for (auto item : res) {
+//                    for (auto num : item) {
+//                        cout << num << " ";
+//                    }
+//                    cout << "\n";
+//                }
+//                cout << endl;
+//            }
+//        }
+
+
+
+//        {
+//            {
+//                vector<int> candidates {2, 3, 6, 7};
+//                auto res = combinationSum(candidates, 7);
+//                for (auto item : res) {
+//                    for (auto num : item) {
+//                        cout << num << " ";
+//                    }
+//                    cout << "\n";
+//                }
+//                cout << endl;
+//            }
+//            {
+//                vector<int> candidates {7,3,2};
+//                auto res = combinationSum(candidates, 18);
+//                for (auto item : res) {
+//                    for (auto num : item) {
+//                        cout << num << " ";
+//                    }
+//                    cout << "\n";
+//                }
+//                cout << endl;
+//            }
+//        }
 
 
 //        {
