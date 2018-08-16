@@ -1831,10 +1831,38 @@ public:
 
 
     int firstMissingPositive(vector<int>& nums) {
+        int size = nums.size();
+        for (int i = 0; i < size; ++i) {
+            int curIndex = i;
+            int swapToValue = -1;
+            int curValue;
+            while (curIndex > -1 && nums[curIndex] != curIndex + 1) {
+                curValue = nums[curIndex];
+                nums[curIndex] = swapToValue;
+                if (curValue <= size) {
+                    swapToValue = curValue;
+                    curIndex = curValue - 1;
+                }
+            }
+        }
 
+        for (int i = 0; i < size; ++i) {
+            if (nums[i] <= 0) {
+                return i + 1;
+            }
+        }
+        return size + 1;
     }
 
     void test() {
+
+//        {
+//            vector<int> nums {7,8,9,11,12};
+//            int res = firstMissingPositive(nums);
+//            cout << nums << endl;
+//            cout << res << endl;
+//        }
+
 
 //        {
 //            {
