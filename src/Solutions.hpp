@@ -1854,7 +1854,61 @@ public:
         return size + 1;
     }
 
+
+    int trap(vector<int>& height) {
+        int res = 0;
+        vector<array<int, 2>> heightIndexes {};
+        for (int i = 0, size = height.size(); i < size; ++i) {
+            auto h = height[i];
+            if (i == 0) {
+                heightIndexes.push_back({h, i});
+            }
+            else {
+                auto& lastHeightIndex = heightIndexes.back();
+                auto lastHeight = lastHeightIndex[0];
+                if (lastHeight != h) {
+                    if (lastHeight < h) {
+                        do {
+                            heightIndexes.pop_back();
+                            auto minEdgeHeight = min(heightIndexes.empty() ? 0 : heightIndexes.back()[0], h);
+                            if (minEdgeHeight > 0) {
+                                res += (minEdgeHeight - lastHeight) * (i - lastHeightIndex[1]);
+                            }
+                            if (heightIndexes.empty()) {
+                                break;
+                            }
+                            else {
+                                lastHeightIndex = heightIndexes.back();
+                                lastHeight = lastHeightIndex[0];
+                            }
+                        } while (lastHeight < h);
+                        if (h > lastHeight) {
+                            heightIndexes.push_back({h, i});
+                        }
+                    }
+                    else {
+                        heightIndexes.push_back({h, i});
+                    }
+                }
+            }
+        }
+        return res;
+    }
+
     void test() {
+
+        {
+            vector<int> height0 {0,1,0,2,1,0,1,3,2,1,2,1};
+            cout << trap(height0) << endl;
+
+            vector<int> height1 {2,1,0,2};
+            cout << trap(height1) << endl;
+
+            vector<int> height2 {4,2,0,3,2,5};
+            cout << trap(height2) << endl;
+        }
+
+
 
 //        {
 //            vector<int> nums {7,8,9,11,12};
