@@ -1930,9 +1930,78 @@ public:
         return res;
     }
 
+
+
+
+    // @TODO 待优化
+    string multiply(const string& numStr1, const string& numStr2) {
+        if (numStr1 == "0" || numStr2 == "0") {
+            return "0";
+        }
+
+        string res = "0";
+        for (int i = 0, len2 = numStr2.length(); i < len2; ++i) {
+            string tempMultiply = multiply(numStr1, numStr2[len2 - i - 1] - '0', i);
+            res = plus(res, tempMultiply);
+        }
+        return res;
+    }
+
+    string multiply(const string& numStr1, int num2, int tailZero = 0) {
+        if (num2 == 0) {
+            return "0";
+        }
+
+        int carry = 0;
+        stringstream ss;
+        while (--tailZero >= 0) {
+            ss << 0;
+        }
+        for (int i = 0, len1 = numStr1.length(); i < len1 || carry > 0; ++i) {
+            int num1 = i < len1 ? numStr1[len1 - i - 1] - '0' : 0;
+            int sum = num1 * num2 + carry;
+            carry = sum / 10;
+            ss << sum % 10;
+        }
+        auto res = ss.str();
+        std::reverse(res.begin(), res.end());
+        return res;
+    }
+
+    string plus(const string& numStr1, const string& numStr2) {
+        if (numStr1 == "0") {
+            return numStr2;
+        }
+        else if (numStr2 == "0") {
+            return numStr1;
+        }
+
+        int len1 = numStr1.length();
+        int len2 = numStr2.length();
+        int maxLen = max(len1, len2);
+        int carry = 0;
+        stringstream ss;
+        for (int i = 0; i < maxLen || carry > 0; ++i) {
+            int num1 = i < len1 ? numStr1[len1 - i - 1] - '0' : 0;
+            int num2 = i < len2 ? numStr2[len2 - i - 1] - '0' : 0;
+            int sum = num1 + num2 + carry;
+            carry = sum / 10;
+            ss << sum % 10;
+        }
+        auto res = ss.str();
+        std::reverse(res.begin(), res.end());
+        return res;
+    }
+
     void test() {
 
+        {
+            string res0 = multiply("123", "456");
+            cout << res0 << endl;
 
+            string res1 = multiply("9", "9");
+            cout << res1 << endl;
+        }
 
 
 
