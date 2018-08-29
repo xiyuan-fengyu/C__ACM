@@ -1855,7 +1855,7 @@ public:
     }
 
 
-    int trap(vector<int>& height) {
+    int trapV1(vector<int>& height) {
         int res = 0;
         vector<array<int, 2>> heightIndexes {};
         for (int i = 0, size = height.size(); i < size; ++i) {
@@ -1866,30 +1866,65 @@ public:
             else {
                 auto& lastHeightIndex = heightIndexes.back();
                 auto lastHeight = lastHeightIndex[0];
-                if (lastHeight != h) {
-                    if (lastHeight < h) {
-                        do {
-                            heightIndexes.pop_back();
-                            auto minEdgeHeight = min(heightIndexes.empty() ? 0 : heightIndexes.back()[0], h);
-                            if (minEdgeHeight > 0) {
-                                res += (minEdgeHeight - lastHeight) * (i - lastHeightIndex[1]);
-                            }
-                            if (heightIndexes.empty()) {
+                if (lastHeight == h) {
+                    lastHeightIndex[1] = i;
+                }
+                else {
+                    while (lastHeight <= h) {
+                        if (lastHeight < h) {
+                            auto curHISize = heightIndexes.size();
+                            if (curHISize == 1) {
+                                heightIndexes.pop_back();
                                 break;
                             }
                             else {
-                                lastHeightIndex = heightIndexes.back();
-                                lastHeight = lastHeightIndex[0];
+                                auto& prevHeightIndex = heightIndexes[curHISize - 2];
+                                auto prevHeight = prevHeightIndex[0];
+                                res += (min(prevHeight, h) - lastHeight) * (i - prevHeightIndex[1] - 1);
+                                heightIndexes.pop_back();
+                                lastHeightIndex = prevHeightIndex;
+                                lastHeight = prevHeight;
                             }
-                        } while (lastHeight < h);
-                        if (h > lastHeight) {
-                            heightIndexes.push_back({h, i});
+                        }
+                        else {
+                            heightIndexes.pop_back();
+                            break;
                         }
                     }
-                    else {
-                        heightIndexes.push_back({h, i});
-                    }
+                    heightIndexes.push_back({h, i});
                 }
+            }
+        }
+        return res;
+    }
+
+    int trap(vector<int>& height) {
+        int res = 0;
+        int size = height.size();
+        if (size <= 2) {
+            return res;
+        }
+
+        int rMax = 0;
+        vector<int> rMaxs(size, 0);
+        for (int i = size - 1; i >= 0; --i) {
+            if (rMax < height[i]) {
+                rMax = height[i];
+            }
+            rMaxs[i] = rMax;
+        }
+
+        int lMax = height[0];
+        for (int i = 1; i < size - 1; ++i) {
+            int h = height[i];
+            rMax = rMaxs[i + 1];
+            if (lMax > h) {
+                if (rMax > h) {
+                    res += min(lMax, rMax) - h;
+                }
+            }
+            else if (lMax < h) {
+                lMax = h;
             }
         }
         return res;
@@ -1897,16 +1932,20 @@ public:
 
     void test() {
 
-        {
-            vector<int> height0 {0,1,0,2,1,0,1,3,2,1,2,1};
-            cout << trap(height0) << endl;
 
-            vector<int> height1 {2,1,0,2};
-            cout << trap(height1) << endl;
 
-            vector<int> height2 {4,2,0,3,2,5};
-            cout << trap(height2) << endl;
-        }
+
+
+//        {
+//            vector<int> height0 {0,1,0,2,1,0,1,3,2,1,2,1};
+//            cout << trap(height0) << endl;
+//
+//            vector<int> height1 {2,1,0,2};
+//            cout << trap(height1) << endl;
+//
+//            vector<int> height2 {4,2,0,3,2,5};
+//            cout << trap(height2) << endl;
+//        }
 
 
 
