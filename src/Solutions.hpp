@@ -317,7 +317,7 @@ public:
 
 
 
-    bool isMatch(const string &s, const string &p) {
+    bool isMatch_regexMatching(const string &s, const string &p) {
         auto sLen = int(s.length());
         auto pLen = int(p.length());
         bool cache[sLen + 1][pLen + 1] {};
@@ -1993,15 +1993,80 @@ public:
         return res;
     }
 
+
+
+
+    bool isMatch_wildcardMatching(const string& s, const string& p) {
+        auto sLen = int(s.length());
+        auto pLen = int(p.length());
+        if (sLen == 0) {
+            return pLen == 0 || (pLen == 1 && p[0] == '*');
+        }
+        if (pLen == 0) {
+            return sLen == 0;
+        }
+
+        auto pStart = p.front();
+        if (pStart != '*' && pStart != '?' && pStart != s[0]) {
+            return false;
+        }
+        auto pEnd = p.back();
+        if (pEnd != '*' && pEnd != '?' && pEnd != s.back()) {
+            return false;
+        }
+
+        vector<int> curValid {-1};
+        for (int pIndex = 0; pIndex < pLen; ++pIndex) {
+            auto pC = p[pIndex];
+            vector<int> newValid {};
+            if (pC == '*') {
+                for (int i = curValid.front(); i < sLen; ++i) {
+                    newValid.push_back(i);
+                }
+            }
+            else {
+                for (int i : curValid) {
+                    if (i + 1 < sLen && (pC == '?' || pC == s[i + 1])) {
+                        newValid.push_back(i + 1);
+                    }
+                }
+            }
+
+            if (newValid.empty()) {
+                return false;
+            }
+            curValid.clear();
+            for (int i : newValid) {
+                curValid.push_back(i);
+            }
+        }
+        return !curValid.empty() && curValid.back() == sLen - 1;
+    }
+
+    vector<int> kmpNext(const string& p) {
+        vector<int> res {-1};
+        long pLen = p.length();
+
+    }
+
     void test() {
 
         {
-            string res0 = multiply("123", "456");
-            cout << res0 << endl;
-
-            string res1 = multiply("9", "9");
-            cout << res1 << endl;
+            cout << isMatch_wildcardMatching("aa", "a") << ' ' << 0 << endl;
+            cout << isMatch_wildcardMatching("aa", "*") << ' ' << 1 << endl;
+            cout << isMatch_wildcardMatching("cb", "?a") << ' ' << 0 << endl;
+            cout << isMatch_wildcardMatching("adceb", "*a*b") << ' ' << 1 << endl;
+            cout << isMatch_wildcardMatching("acdcb", "a*c?b") << ' ' << 0 << endl;
         }
+
+
+//        {
+//            string res0 = multiply("123", "456");
+//            cout << res0 << endl;
+//
+//            string res1 = multiply("9", "9");
+//            cout << res1 << endl;
+//        }
 
 
 
@@ -2348,16 +2413,16 @@ public:
 //        cout << maxArea(heights) << endl;
 
 
-//        cout << isMatch("aa", "aa*a") << endl;
-//        cout << isMatch("babcacacbbbacbaabbb", ".*.*b*ab*a*aa*b*.*c") << endl;
-//        cout << isMatch("aa", "a") << endl;
-//        cout << isMatch("aa", "a.") << endl;
-//        cout << isMatch("aa", "a*") << endl;
-//        cout << isMatch("ab", ".*") << endl;
-//        cout << isMatch("", "a*") << endl;
-//        cout << isMatch("", "") << endl;
-//        cout << isMatch("", ".") << endl;
-//        cout << isMatch("abcddde", "a.cd*e") << endl;
+//        cout << isMatch_regexMatching("aa", "aa*a") << endl;
+//        cout << isMatch_regexMatching("babcacacbbbacbaabbb", ".*.*b*ab*a*aa*b*.*c") << endl;
+//        cout << isMatch_regexMatching("aa", "a") << endl;
+//        cout << isMatch_regexMatching("aa", "a.") << endl;
+//        cout << isMatch_regexMatching("aa", "a*") << endl;
+//        cout << isMatch_regexMatching("ab", ".*") << endl;
+//        cout << isMatch_regexMatching("", "a*") << endl;
+//        cout << isMatch_regexMatching("", "") << endl;
+//        cout << isMatch_regexMatching("", ".") << endl;
+//        cout << isMatch_regexMatching("abcddde", "a.cd*e") << endl;
 
 
 //        cout << isPalindrome(2147447412) << endl;
