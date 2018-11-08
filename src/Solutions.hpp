@@ -2035,10 +2035,7 @@ public:
             if (newValid.empty()) {
                 return false;
             }
-            curValid.clear();
-            for (int i : newValid) {
-                curValid.push_back(i);
-            }
+            curValid = newValid;
         }
         return !curValid.empty() && curValid.back() == sLen - 1;
     }
@@ -2051,13 +2048,13 @@ public:
 
     void test() {
 
-        {
-            cout << isMatch_wildcardMatching("aa", "a") << ' ' << 0 << endl;
-            cout << isMatch_wildcardMatching("aa", "*") << ' ' << 1 << endl;
-            cout << isMatch_wildcardMatching("cb", "?a") << ' ' << 0 << endl;
-            cout << isMatch_wildcardMatching("adceb", "*a*b") << ' ' << 1 << endl;
-            cout << isMatch_wildcardMatching("acdcb", "a*c?b") << ' ' << 0 << endl;
-        }
+//        {
+//            cout << isMatch_wildcardMatching("aa", "a") << ' ' << 0 << endl;
+//            cout << isMatch_wildcardMatching("aa", "*") << ' ' << 1 << endl;
+//            cout << isMatch_wildcardMatching("cb", "?a") << ' ' << 0 << endl;
+//            cout << isMatch_wildcardMatching("adceb", "*a*b") << ' ' << 1 << endl;
+//            cout << isMatch_wildcardMatching("acdcb", "a*c?b") << ' ' << 0 << endl;
+//        }
 
 
 //        {
