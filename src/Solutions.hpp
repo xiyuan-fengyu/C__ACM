@@ -2041,13 +2041,22 @@ public:
     }
 
     vector<int> kmpNext(const string& p) {
-        vector<int> res {-1};
-        long pLen = p.length();
-
+        vector<int> next {-1, 0};
+        int pLen = int(p.length());
+        for (int i = 1; i < pLen; i++) {
+            int j = i;
+            while (j > -1 && p[next[j]] != p[j]) {
+                j = next[j];
+            }
+            next.push_back(j == -1 ? 0 : next[j] + 1);
+        }
+        return next;
     }
 
     void test() {
 
+        cout << kmpNext("abcabcdabcabcd") << endl;
+        
 //        {
 //            cout << isMatch_wildcardMatching("aa", "a") << ' ' << 0 << endl;
 //            cout << isMatch_wildcardMatching("aa", "*") << ' ' << 1 << endl;
