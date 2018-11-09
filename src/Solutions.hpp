@@ -2040,23 +2040,52 @@ public:
         return !curValid.empty() && curValid.back() == sLen - 1;
     }
 
-    vector<int> kmpNext(const string& p) {
-        vector<int> next {-1, 0};
-        int pLen = int(p.length());
-        for (int i = 1; i < pLen; i++) {
-            int j = i;
-            while (j > -1 && p[next[j]] != p[j]) {
+    int indexOf(const string& s, const string& p) {
+        if (s.length() < p.length()) {
+            return false;
+        }
+
+        if (s.length() + p.length() == 0) {
+            return true;
+        }
+
+        vector<int> next = kmpNext(p);
+        int i = 0, j = 0, sLen = int(s.length()), pLen = int(p.length());
+        for (; i < sLen && j < pLen;) {
+            if (j == -1 || s[i] == p[j]) {
+                i++;
+                j++;
+            }
+            else {
                 j = next[j];
             }
-            next.push_back(j == -1 ? 0 : next[j] + 1);
+        }
+        return j == pLen ? i - j : -1;
+    }
+
+    vector<int> kmpNext(const string& p) {
+        vector<int> next {-1};
+        for (int i = 0, j = -1, pLen = int(p.length()); i < pLen - 1;) {
+            if (j == -1 || p[i] == p[j]) {
+                next.push_back(++j);
+                i++;
+            }
+            else {
+                j = next[j];
+            }
         }
         return next;
     }
 
     void test() {
 
-        cout << kmpNext("abcabcdabcabcd") << endl;
-        
+        {
+            cout << kmpNext("abcabcdabcabcd") << endl;
+            cout << kmpNext("abcabd") << endl;
+            cout << indexOf("abcdabcb", "abcb") << endl;
+        }
+
+
 //        {
 //            cout << isMatch_wildcardMatching("aa", "a") << ' ' << 0 << endl;
 //            cout << isMatch_wildcardMatching("aa", "*") << ' ' << 1 << endl;
