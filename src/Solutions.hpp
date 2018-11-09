@@ -2077,13 +2077,51 @@ public:
         return next;
     }
 
+
+
+    int jump(vector<int>& nums) {
+        int size = int(nums.size());
+        if (nums[0] + 1 >= size) {
+            return min(1, size - 1);
+        }
+
+        int stepNum = 0;
+        for (int i = 0; i < size - 1; ) {
+            stepNum++;
+            if (i + nums[i] >= size - 1) {
+                return stepNum;
+            }
+            for (int j = i + 1, nextMax = j, last = i + nums[i]; j <= last; j++) {
+                if (j + nums[j] >= nextMax) {
+                    nextMax = j + nums[j];
+                    i = j;
+                }
+            }
+        }
+        return stepNum;
+    }
+
     void test() {
 
-        {
-            cout << kmpNext("abcabcdabcabcd") << endl;
-            cout << kmpNext("abcabd") << endl;
-            cout << indexOf("abcdabcb", "abcb") << endl;
-        }
+//        {
+//            vector<int> steps {2, 3, 1, 1, 4};
+//            cout << jump(steps) << endl;
+//            vector<int> steps1 {1, 2, 3};
+//            cout << jump(steps1) << endl;
+//            vector<int> steps2 {2,1,1,1,1};
+//            cout << jump(steps2) << endl;
+//            vector<int> steps3 {1,1,1,1};
+//            cout << jump(steps3) << endl;
+//            vector<int> steps4 {3,4,3,2,5,4,3};
+//            cout << jump(steps4) << endl;
+//        }
+
+
+//        {
+//            cout << kmpNext("abcabcdabcabcd") << endl;
+//            cout << kmpNext("abcabd") << endl;
+//            cout << indexOf("abcdabcb", "abcb") << endl;
+//        }
 
 
 //        {
