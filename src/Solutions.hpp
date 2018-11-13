@@ -2157,7 +2157,42 @@ public:
         }
     }
 
+
+
+    vector<vector<string>> groupAnagrams(vector<string>& strs) {
+        vector<vector<string>> res {};
+        int size = int(strs.size());
+        if (size == 1) {
+            res.push_back(strs);
+        }
+        else {
+            unordered_map<string, int> hashIndexs {};
+            for (auto &str : strs) {
+                auto sorted = str;
+                sort(sorted.begin(), sorted.end());
+                auto f = hashIndexs.find(sorted);
+                if (f != hashIndexs.end()) {
+                    res[f->second].push_back(str);
+                }
+                else {
+                    res.push_back({str});
+                    hashIndexs[sorted] = int(res.size() - 1);
+                }
+            }
+        }
+        return res;
+    }
+
+
     void test() {
+
+        {
+            vector<string> strs {"has","rod","tom","hum","him","yon","met","dye"};
+            auto res = groupAnagrams(strs);
+            for (auto item : res) {
+                cout << item << endl;
+            }
+        }
 
 //        {
 //            vector<vector<int>> matrix = {
