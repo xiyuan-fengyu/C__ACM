@@ -2138,7 +2138,44 @@ public:
         return res;
     }
 
+
+
+    void rotate(vector<vector<int>>& matrix) {
+        int n = int(matrix.size());
+        if (n <= 1) {
+            return;
+        }
+
+        for (int i = 0; i < n - 1 - i; i++) {
+            for (int j = i; j < n - 1 - i; j++) {
+                int leftTop = matrix[i][j];
+                matrix[i][j] = matrix[n - 1 - j][i];
+                matrix[n - 1 - j][i] = matrix[n - 1 - i][n - 1 - j];
+                matrix[n - 1 - i][n - 1 - j] = matrix[j][n - 1 -i];
+                matrix[j][n - 1 -i] = leftTop;
+            }
+        }
+    }
+
     void test() {
+
+//        {
+//            vector<vector<int>> matrix = {
+//                    {1, 2, 3},
+//                    {4, 5, 6},
+//                    {7, 8, 9}
+//            };
+//            for (auto item : matrix) {
+//                cout << item << endl;
+//            }
+//            cout << endl;
+//            rotate(matrix);
+//            for (auto item : matrix) {
+//                cout << item << endl;
+//            }
+//        }
+
+
 
 //        {
 //            vector<int> nums {6,3,2,7,4,-1};
