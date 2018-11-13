@@ -2101,7 +2101,50 @@ public:
         return stepNum;
     }
 
+
+
+    vector<vector<int>> permute(vector<int>& nums) {
+        vector<vector<int>> res {};
+        if (nums.size() <= 1) {
+            res.push_back(nums);
+            return res;
+        }
+
+        sort(nums.begin(), nums.end());
+        res.push_back(nums);
+
+        bool hasNext;
+        do {
+            hasNext = false;
+            for (auto itI = nums.end() - 2, end = nums.begin() - 1; itI != end; itI--) {
+                for (auto itJ = nums.end() - 1; itJ != itI; itJ--) {
+                    if (*itI < *itJ) {
+                        int temp = *itI;
+                        *itI = *itJ;
+                        *itJ = temp;
+                        sort(itI + 1, nums.end());
+                        res.push_back(nums);
+                        hasNext = true;
+                        goto permuteNext;
+                    }
+                }
+            }
+            permuteNext:;
+        } while (hasNext);
+        return res;
+    }
+
     void test() {
+
+//        {
+//            vector<int> nums {6,3,2,7,4,-1};
+//            auto res = permute(nums);
+//            for (auto item : res) {
+//                cout << item << endl;
+//            }
+//        }
+
+
 
 //        {
 //            vector<int> steps {2, 3, 1, 1, 4};
