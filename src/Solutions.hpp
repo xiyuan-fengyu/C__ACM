@@ -2184,15 +2184,42 @@ public:
     }
 
 
+
+    double myPow(double x, int n) {
+        if (n < 0) {
+            return 1.0 / myPow_(x, -n);
+        }
+        return myPow_(x, n);
+    }
+
+    double myPow_(double x, int n) {
+        if (n == 0) {
+            return 1;
+        }
+
+        double half = myPow_(x, n / 2);
+        if (n % 2 == 0) {
+            return half * half;
+        }
+        else {
+            return half * half * x;
+        }
+    }
+
     void test() {
 
-        {
-            vector<string> strs {"has","rod","tom","hum","him","yon","met","dye"};
-            auto res = groupAnagrams(strs);
-            for (auto item : res) {
-                cout << item << endl;
-            }
-        }
+//        {
+//            cout << myPow(2.0, -10) << endl;
+//        }
+
+
+//        {
+//            vector<string> strs {"has","rod","tom","hum","him","yon","met","dye"};
+//            auto res = groupAnagrams(strs);
+//            for (auto item : res) {
+//                cout << item << endl;
+//            }
+//        }
 
 //        {
 //            vector<vector<int>> matrix = {
