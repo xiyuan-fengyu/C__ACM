@@ -2102,7 +2102,11 @@ public:
     }
 
 
-
+    /**
+     * 不管是否有重复元素，都适用
+     * @param nums
+     * @return
+     */
     vector<vector<int>> permute(vector<int>& nums) {
         vector<vector<int>> res {};
         if (nums.size() <= 1) {
