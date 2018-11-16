@@ -2206,7 +2206,92 @@ public:
         }
     }
 
+
+    vector<vector<string>> solveNQueens(int n) {
+        vector<vector<string>> res = {};
+        if (n == 1) {
+            res.push_back(vector<string>{"Q"});
+            return res;
+        }
+        else if (n <= 3) {
+            return res;
+        }
+
+        vector<vector<char>> board(n, vector<char>(n, '.'));
+        vector<bool> status(n * 6 - 2, true);
+        for (int i = 0, half = n / 2; i < half; i++) {
+            solveNQueens(board, status, 0, i, res);
+        }
+
+        int size = res.size();
+        if (n % 2 == 1) {
+            solveNQueens(board, status, 0, n / 2, res);
+        }
+
+        // 对称获取另一半结果
+        for (int i = size - 1; i >= 0; --i) {
+            auto& subRes = res[i];
+            vector<string> reverseSubRes {};
+            for (auto str : subRes) {
+                reverseSubRes.emplace_back(str.rbegin(), str.rend());
+            }
+            res.push_back(reverseSubRes);
+        }
+        return res;
+    }
+
+    void solveNQueens(vector<vector<char>>& board, vector<bool>& status, int row, int col, vector<vector<string>>& res) {
+        int size = board.size();
+        if (isPosValid(status, size, row, col)) {
+            board[row][col] = 'Q';
+            if (row == size - 1) {
+                addBoardToRes(board, res);
+            }
+            else {
+                setPosStatus(status, size, row, col, false);
+                for (int i = 0; i < size; i++) {
+                    solveNQueens(board, status, row + 1, i, res);
+                }
+                setPosStatus(status, size, row, col, true);
+            }
+            board[row][col] = '.';
+        }
+    }
+
+    void addBoardToRes(vector<vector<char>>& board, vector<vector<string>>& res) {
+        vector<string> subRes {};
+        for (auto boardRow : board) {
+            subRes.emplace_back(boardRow.begin(), boardRow.end());
+        }
+        res.push_back(subRes);
+    };
+
+    bool isPosValid(vector<bool>& status, int size, int row, int col) {
+        return status[row]
+            && status[size + col]
+            && status[size * 2 + (size - 1) - (row - col)]
+            && status[size * 4 - 1 + (row + col)];
+    }
+
+    void setPosStatus(vector<bool>& status, int size, int row, int col, bool valid) {
+        status[row] = valid;
+        status[size + col] = valid;
+        status[size * 2 + (size - 1) - (row - col)] = valid;
+        status[size * 4 - 1 + (row + col)] = valid;
+    }
+
     void test() {
+
+//        {
+//            auto res = solveNQueens(5);
+//            for (auto item : res) {
+//                for (auto str : item) {
+//                    cout << str << endl;
+//                }
+//                cout << endl;
+//            }
+//        }
+
 
 //        {
 //            cout << myPow(2.0, -10) << endl;
