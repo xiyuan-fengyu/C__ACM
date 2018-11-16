@@ -2264,7 +2264,7 @@ public:
             subRes.emplace_back(boardRow.begin(), boardRow.end());
         }
         res.push_back(subRes);
-    };
+    }
 
     bool isPosValid(vector<bool>& status, int size, int row, int col) {
         return status[row]
@@ -2280,7 +2280,56 @@ public:
         status[size * 4 - 1 + (row + col)] = valid;
     }
 
+
+
+    int totalNQueens(int n) {
+        if (n == 1) {
+            return 1;
+        }
+        else if (n <= 3) {
+            return 0;
+        }
+
+        int res = 0;
+        vector<vector<char>> board(n, vector<char>(n, '.'));
+        vector<bool> status(n * 6 - 2, true);
+        for (int i = 0, half = n / 2; i < half; i++) {
+            res += totalNQueens(board, status, 0, i);
+        }
+
+        res *= 2;
+        if (n % 2 == 1) {
+            res += totalNQueens(board, status, 0, n / 2);
+        }
+        return res;
+    }
+
+    int totalNQueens(vector<vector<char>>& board, vector<bool>& status, int row, int col) {
+        int res = 0;
+        int size = board.size();
+        if (isPosValid(status, size, row, col)) {
+            board[row][col] = 'Q';
+            if (row == size - 1) {
+                res = 1;
+            }
+            else {
+                setPosStatus(status, size, row, col, false);
+                for (int i = 0; i < size; i++) {
+                    res += totalNQueens(board, status, row + 1, i);
+                }
+                setPosStatus(status, size, row, col, true);
+            }
+            board[row][col] = '.';
+        }
+        return res;
+    }
+
     void test() {
+
+//        {
+//            cout << totalNQueens(4) << endl;
+//            cout << totalNQueens(5) << endl;
+//        }
 
 //        {
 //            auto res = solveNQueens(5);
