@@ -2324,7 +2324,29 @@ public:
         return res;
     }
 
+
+    int maxSubArray(vector<int>& nums) {
+        if (nums.empty()) {
+            return 0;
+        }
+
+        int max = nums.front();
+        int tempMax = max;
+        for (int i = 1, size = int(nums.size()); i < size; i++) {
+            int cur = nums[i];
+            tempMax = std::max(tempMax + cur, cur);
+            max = std::max(max, tempMax);
+        }
+        return max;
+    }
+
     void test() {
+
+        {
+            vector<int> nums {-2,1,-3,4,-1,2,1,-5,4};
+            cout << maxSubArray(nums) << endl;
+        }
+
 
 //        {
 //            cout << totalNQueens(4) << endl;
